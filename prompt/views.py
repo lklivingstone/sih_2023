@@ -26,7 +26,19 @@ def sample_view(request):
     except subprocess.CalledProcessError as e:
         error_message = e.stderr
         return JsonResponse({'error': 'cURL request failed', 'message': error_message})
-    
+
+@sync_to_async
+@api_view(['POST'])  
+def upload_document(request):
+    uploaded_file = request.FILES.get('document')
+    if uploaded_file:
+        # Add the logic
+        return JsonResponse({"message": 'Document uploaded successfully'}, status=200)
+    else:
+        return JsonResponse({"message": 'No document uploaded'}, status=400)
+
+
+
 @api_view(['GET'])
 def test_view(request):
     return Response("hi")
