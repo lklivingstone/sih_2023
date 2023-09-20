@@ -5,6 +5,8 @@ import time
 import subprocess
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
+import requests
+import json
 
 @sync_to_async
 @api_view(['POST'])
@@ -37,6 +39,35 @@ def upload_document(request):
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
 
+@sync_to_async
+@api_view(['POST'])  
+def summarize(request):
+    json_data = json.loads(request.body)
+    prompt = "Please provide a summary of the following text:\n"+ json_data['prompt']
+    endpoint_url = "http://localhost:8000/v1/completions"
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "model": "TheBloke/Llama-2-7b-chat-fp16",
+        "prompt": prompt,
+        "max_tokens": 500,
+        "temperature": 0.7
+    }
+    try:
+        response = requests.post(endpoint_url, json=data, headers=headers)
+    except:
+        print(prompt)
+
+    if response.status_code == 200:
+        result = response.json()
+        return JsonResponse({"message": 'Generation Successful',"data":result}, status=200)
+   
+    else:
+        print(prompt,f"Error: {response.status_code} - {response.text}")
+        return None
 
 
 @api_view(['GET'])
