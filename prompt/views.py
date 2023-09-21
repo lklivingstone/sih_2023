@@ -10,6 +10,10 @@ import json
 from utils import (
     get_summarize_header
 )
+from PIL import Image
+from pytesseract import pytesseract
+import enum
+
 
 MODEL = "TheBloke/Llama-2-7b-chat-fp16"
 TOKENS = 1200
@@ -43,6 +47,36 @@ def upload_document(request):
     uploaded_file = request.FILES.get('document')
     if uploaded_file:
         # Add the logic
+
+        class OS(enum.Enum):
+            Mac = 0
+            Windows = 1
+
+
+        class Lang(enum.Enum):
+            ENG = 'eng'
+            SPA = 'spa'
+
+
+        class ImageReader:
+            def _init_(self, os: OS):
+                if os == OS.Windows:
+                    windows_path = r""
+                    pytesseract.tesseract_cmd = windows_path
+                    print("Running on Windows!")
+
+            def extract_text(self, image: str, lang: str) -> str:
+                img = Image.open(image)
+                extracted_text = pytesseract.image_to_string(img, lang=lang)
+                return extracted_text
+
+
+        if _name_ == "_main_":
+            ir = ImageReader(OS.Windows)
+            text = ir.extract_text('Images/AT-2023-2011GR_page-0001.jpg', lang='eng')
+            print(text)
+
+        # End the logic
         return JsonResponse({"message": 'Document uploaded successfully'}, status=200)
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
