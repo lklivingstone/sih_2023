@@ -11,6 +11,7 @@ import DirectionsIcon from '@mui/icons-material/Directions';
 import { Paper, InputBase  } from '@mui/material';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import CloudDoneOutlinedIcon from '@mui/icons-material/CloudDoneOutlined';
+import axios from 'axios';
 
 const { reverse } = Array;
 
@@ -23,7 +24,18 @@ const Promptbox = ({name}) => {
     
     // const username = useSelector((state) => state.user.user.username);
     const username = "creed";
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([
+        {
+            "id": 1,
+            "author": "creed",
+            "content": "This is the first text"
+        },
+        {
+            "id": 2,
+            "author": "llm",
+            "content": "This is the second text"
+        }
+    ]);
     const messagesEndRef = useRef(null)
 
     const scrollToBottom = () => {
@@ -83,8 +95,7 @@ const Promptbox = ({name}) => {
                     style={{padding: "5px 30px", fontWeight: "600"}}
                     sx={{backgroundColor: "#172a46", border: "1px solid #64ffdb", color: "white"}}
                     >
-                            {message.content}
-
+                        {message.content}
                     </Paper>
                         {/* </p>
                     </div> */}
@@ -96,17 +107,29 @@ const Promptbox = ({name}) => {
       };
 
   
-    const handleSendMessageClick = (event) => {
-        if (messageInput.length==0) {
+    const handleSendMessageClick = async (event) => {
+        if (messageInput.length==0 && !image) {
             return;
         }
         event.preventDefault()
-        const messageObject= {
-            content: messageInput,
-            command: 'new_message',
-            from: username,
-            chatID: ID
-        };
+        const formData = new FormData();
+        formData.append('document', image);
+        
+        try {
+            const config = {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+            };
+            
+            const response = await axios.post('http://127.0.0.1:7000/api/prompt/test/', formData, config);
+            // console.log("Clicked")
+        } catch (error) {
+            console.log(error)
+
+            setImage(null)
+        }
+
         
         setMessageValue('')
         setMessageInput('');
@@ -151,10 +174,12 @@ const Promptbox = ({name}) => {
 
     const [image, setImage] = useState(null);
     const handleFileInputChange = (event) => {
+        console.log("file")
         const file = event.target.files[0];
         // Handle the selected file here
         setImage(file)
     };
+    console.log(image)
 
     const handleButtonClick = () => {
         fileInputRef.current.click();
@@ -172,9 +197,10 @@ const Promptbox = ({name}) => {
       >
                 <input
                 type="file"
-                style={{ display: 'none' }}
+                // style={{ display: 'none' }}
+                style={{ width: "150px"}}
                 ref={fileInputRef}
-                onChange={handleFileInputChange}
+                onChange={(e)=>handleFileInputChange(e)}
                 />
                     <button 
                     className="upload-icon" 
@@ -202,7 +228,7 @@ const Promptbox = ({name}) => {
             onKeyDown={handleKeyDown}
             />
             <IconButton type="button" sx={{ color: "#2c527d" }} aria-label="search">
-            <SendOutlinedIcon onClick={(e)=>handleSendMessageClick(e)}/>
+                <SendOutlinedIcon onClick={(e)=>handleSendMessageClick(e)}/>
             </IconButton>
             
         </Paper>
