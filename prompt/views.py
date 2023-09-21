@@ -8,6 +8,7 @@ from django.http import JsonResponse
 import requests
 import json
 
+
 @sync_to_async
 @api_view(['POST'])
 def sample_view(request):
@@ -29,6 +30,7 @@ def sample_view(request):
         error_message = e.stderr
         return JsonResponse({'error': 'cURL request failed', 'message': error_message})
 
+
 @sync_to_async
 @api_view(['POST'])  
 def upload_document(request):
@@ -39,11 +41,20 @@ def upload_document(request):
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
 
+
 @sync_to_async
 @api_view(['POST'])  
 def summarize(request):
+
+
+    header = ""
+
     json_data = json.loads(request.body)
-    prompt = "Please provide a summary of the following text:\n"+ json_data['prompt']
+
+    with open("prompt/summarize_prompt_header.txt") as f:
+        header = f.read()
+
+    prompt = header + "\nPlease provide a summary of the following text:\n"+ json_data['prompt']
     endpoint_url = "http://localhost:8000/v1/completions"
 
     headers = {
@@ -56,18 +67,20 @@ def summarize(request):
         "max_tokens": 500,
         "temperature": 0.7
     }
+
     try:
         response = requests.post(endpoint_url, json=data, headers=headers)
-    except:
-        print(prompt)
 
-    if response.status_code == 200:
-        result = response.json()
-        return JsonResponse({"message": 'Generation Successful',"data":result}, status=200)
-   
-    else:
-        print(prompt,f"Error: {response.status_code} - {response.text}")
-        return None
+        if response.status_code == 200:
+            result = response.json()
+            return JsonResponse({"message": 'Generation Successful',"data":result}, status=200)
+    
+        else:
+            print(prompt,f"Error: {response.status_code} - {response.text}")
+            return None
+        
+    except:
+        return JsonResponse({"prompt":prompt})
 
 
 @api_view(['GET'])
