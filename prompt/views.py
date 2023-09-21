@@ -7,6 +7,9 @@ from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 import requests
 import json
+from utils import (
+    get_summarize_header
+)
 
 MODEL = "TheBloke/Llama-2-7b-chat-fp16"
 TOKENS = 1200
@@ -49,11 +52,8 @@ def upload_document(request):
 @api_view(['POST'])  
 def summarize(request):
 
-    header = ""
+    header = get_summarize_header()
     json_data = json.loads(request.body)
-
-    with open("prompt/summarize_prompt_header.txt") as f:
-        header = f.read()
 
     prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n"+ json_data['prompt'] + "[/INST]\n"
     endpoint_url = "http://localhost:8000/v1/completions"
