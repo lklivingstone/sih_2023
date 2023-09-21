@@ -8,6 +8,9 @@ from django.http import JsonResponse
 import requests
 import json
 
+MODEL = "TheBloke/Llama-2-7b-chat-fp16"
+TOKENS = 1200
+TEMP = 0.9
 
 @sync_to_async
 @api_view(['POST'])
@@ -46,15 +49,13 @@ def upload_document(request):
 @api_view(['POST'])  
 def summarize(request):
 
-
     header = ""
-
     json_data = json.loads(request.body)
 
     with open("prompt/summarize_prompt_header.txt") as f:
         header = f.read()
 
-    prompt = header + "\nPlease provide a summary of the following text:\n"+ json_data['prompt']
+    prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n"+ json_data['prompt'] + "[/INST]\n"
     endpoint_url = "http://localhost:8000/v1/completions"
 
     headers = {
@@ -62,25 +63,20 @@ def summarize(request):
     }
 
     data = {
-        "model": "TheBloke/Llama-2-7b-chat-fp16",
+        "model": MODEL,
         "prompt": prompt,
-        "max_tokens": 500,
-        "temperature": 0.7
+        "max_tokens": TOKENS,
+        "temperature": TEMP
     }
 
-    try:
-        response = requests.post(endpoint_url, json=data, headers=headers)
+    response = requests.post(endpoint_url, json=data, headers=headers)
 
-        if response.status_code == 200:
-            result = response.json()
-            return JsonResponse({"message": 'Generation Successful',"data":result}, status=200)
-    
-        else:
-            print(prompt,f"Error: {response.status_code} - {response.text}")
-            return None
-        
-    except:
-        return JsonResponse({"prompt":prompt})
+    if response.status_code == 200:
+        result = response.json()
+        return JsonResponse({"message": 'Generation Successful',"data":result['choices'][0]['text']}, status=200)
+    else:
+        print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
+        return JsonResponse({"message": 'Error'})
 
 
 @api_view(['GET'])
