@@ -4,6 +4,7 @@ charset-normalizer==3.2.0
 Django==4.2.5
 djangorestframework==3.14.0
 idna==3.4
+PyPDF2==3.0.1
 pytz==2023.3.post1
 requests==2.31.0
 sqlparse==0.4.4

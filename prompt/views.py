@@ -8,9 +8,9 @@ from django.http import JsonResponse
 import requests
 import json
 from utils import (
-    get_summarize_header
+    get_summarize_header,
+    pdf_extraction_alg
 )
-
 
 MODEL = "TheBloke/Llama-2-7b-chat-fp16"
 TOKENS = 1200
@@ -44,9 +44,11 @@ def upload_document(request):
     uploaded_file = request.FILES.get('document')
     if uploaded_file:
         # Add the logic
-            
+        extracted_text = pdf_extraction_alg(uploaded_file)
+        print(extracted_text)
+
         # End the logic
-        return JsonResponse({"message": 'Document uploaded successfully'}, status=200)
+        return JsonResponse({"message": 'Document uploaded successfully', "text": extracted_text}, status=200)
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
 
