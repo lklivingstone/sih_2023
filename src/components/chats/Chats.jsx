@@ -7,7 +7,10 @@ import axios from 'axios';
 // import { useDispatch } from "react-redux";
 // import { changeChatID, changeRecipient } from "../Redux/userRedux"
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import AddIcon from '@mui/icons-material/Add';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
 import './Chats.css'
+import "../customScrollbar/CustomScrollbar.css";
 
 const Chats = () => {
     // const user= useSelector((state)=>state.user)
@@ -16,6 +19,18 @@ const Chats = () => {
     // const token= user.token
     // 123, 123, 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 
     const [chats, setChats]= useState([
+        {
+            'id': 1,
+            'desc': "Lorem Ipsum"
+        },
+        {
+            'id': 2,
+            'desc': "Lorem Ipsum"
+        },
+        {
+            'id': 3,
+            'desc': "Lorem Ipsum"
+        },
         {
             'id': 1,
             'desc': "Lorem Ipsum"
@@ -71,13 +86,13 @@ const Chats = () => {
                             className='each-chat-li'
                             style={{display: "flex",
                             flexDirection: "column",
-                            justifyContent: "flex-end",
-                            alignItems: "flex-end",
+                            justifyContent: "center",
+                            alignItems: "center",
                             width: "100%",
                             listStyleType: "none"}}
                             key={chat.id}
                             >
-                                <div
+                                {/* <div
                                 onClick={(e)=>handleClick(chat)}
                                 className='each-chat-div'>
                                     <p
@@ -86,8 +101,10 @@ const Chats = () => {
                                     >
                                         {chat.desc}
                                     </p>
-                                </div>
-                                <div className="divider"></div>
+                                </div> */}
+                                <button className='each-chat-button'>
+                                    test
+                                </button>
                         </li>
                     // </Link>
                 ))}
@@ -98,18 +115,41 @@ const Chats = () => {
     return (
         <div className="chats">
             <div style={{
-                flex: 1
+                flex: 1,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
             }}>
-
+                <button className='new-chat-button'>
+                    New Chat <AddIcon />
+                </button>
             </div>
-            <div style={{
-                flex: 5
+            <div className='each-chat-div' style={{
+                flex: 4,
+                
+                overflowX: "hidden",
             }}>
-                <h3>My Chats</h3>
+                <h3
+                    style={{
+                        margin: "5%",
+                        color: "#D2B7E5"
+                    }}
+                >My Chats</h3>
             {
                 renderChats(chats)
             }
-            <h3>
+            </div>
+            <div 
+            className='custom-scrollbar'
+            style={{
+                flex: 4,
+                overflow: "scroll"
+            }}>
+            <h3
+                style={{
+                    margin: "5%",
+                    color: "#D2B7E5"
+                }}>
                 Documents
             </h3>
             {
@@ -117,8 +157,59 @@ const Chats = () => {
             }
             </div>
             <div style={{
-                flex: 2
+                flex: 3,
+                display: "flex"
             }}>
+                <div style={{
+                    // backgroundColor: "white",
+                    width: "70%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <div
+                    style={{
+                        height: "70%",
+                        width: "70%",
+                        backgroundColor: "#C6A4DE",
+                        padding: "8%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        borderRadius: "15px",
+                        boxShadow: "inset 6px 6px 10px 0 rgba(0, 0, 0, 0.2), inset -6px -6px 10px 0 rgba(255, 255, 255, 0.5)"
+
+                    }}>
+                        <p>System Monitoring</p>
+                        <button className='monitor-button'>
+                            Monitor
+                        </button>
+
+                    </div>
+                </div>
+                <div style={{
+                    width: "30%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "space-around"
+                }}>
+                    <div style={{
+                        height: "30px",
+                        width: "30px",
+                        backgroundColor: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <h2>J</h2>
+                    </div>
+                    <FirstPageIcon style={{
+                        color: "rgb(253, 208, 255)",
+                        fontSize: "35px"
+                    }} />
+                </div>
 
             </div>
         </div>

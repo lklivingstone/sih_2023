@@ -22,8 +22,8 @@ CHAT
 }
 
 .join {
-    margin-left: 250px;
-    padding-left: 50px;
+    margin-left: 300px;
+    /* padding-left: 50px; */
     /* margin-top: 60px; */
     height: 100vh;
     display: flex;
@@ -36,12 +36,20 @@ CHAT
 }
 
 .upload-icon {
+    font-family: 'Poppins';
     cursor: pointer;
-    height: 30%; 
+    width: 20%;
+    padding: 5px;
+    margin: 20px;
+    /* height: 30%; 
     border: 0;
-    width: 50%;
-    transition: width 0.3s ease; 
+    width: 50%; */
+    border: 3px solid #303030;
+    border-radius: 7px;
+    font-size: 20px;
     background-color: transparent;
-    color: #edf5e1;
-    font-family: 'Reem Kufi Fun';
+    color: #303030;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }

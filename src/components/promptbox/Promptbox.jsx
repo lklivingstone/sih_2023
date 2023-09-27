@@ -11,7 +11,10 @@ import DirectionsIcon from '@mui/icons-material/Directions';
 import { Paper, InputBase  } from '@mui/material';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import CloudDoneOutlinedIcon from '@mui/icons-material/CloudDoneOutlined';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import axios from 'axios';
+import ChatInput from '../chatInput/ChatInput';
 
 const { reverse } = Array;
 
@@ -34,7 +37,8 @@ const Promptbox = ({name}) => {
             "id": 2,
             "author": "llm",
             "content": "This is the second text"
-        }
+        },
+        
     ]);
     const messagesEndRef = useRef(null)
 
@@ -84,7 +88,8 @@ const Promptbox = ({name}) => {
             {messages.map(message => (
                 <li
                 className={message.author === username ? 'right' : 'left'} 
-                style={{display: "flex",
+                style={{
+                    display: "flex",
                 marginBottom: "15px",
                 listStyleType: "none",
                 justifyContent: message.author === username ? "flex-end" : 'flex-start'
@@ -187,7 +192,38 @@ const Promptbox = ({name}) => {
 
     const messagingField= (
       <>
-        <Paper
+        <input
+                type="file"
+                style={{ display: 'none' }}
+                // style={{ width: "150px"}}
+                ref={fileInputRef}
+                onChange={(e)=>handleFileInputChange(e)}
+                />
+                    <button 
+                    className="upload-icon" 
+                    onClick={handleButtonClick}>
+                        Upload PDF
+                        {
+                        !image ? <FileUploadOutlinedIcon fontSize="large"  /> : 
+                        <CloudDoneOutlinedIcon fontSize="large" /> 
+                        }
+                    </button>
+                    <div>
+                        <textarea
+                        
+                        style={{
+                            resize: "none",
+                            minHeight: "50px",
+                            maxHeight: "400px",
+                            width: "70%",
+                            overflowY: "hideen",
+                            color: "white",
+                            backgroundColor: "#303030"
+                        }}
+                         />
+                    </div>
+        {/* <ChatInput /> */}
+        {/* <Paper
           elevation={0} 
           variant="outlined" square
           component="form"
@@ -231,7 +267,7 @@ const Promptbox = ({name}) => {
                 <SendOutlinedIcon onClick={(e)=>handleSendMessageClick(e)}/>
             </IconButton>
             
-        </Paper>
+        </Paper> */}
       </>
 
   )
@@ -243,7 +279,7 @@ const Promptbox = ({name}) => {
           paddingTop: "70px",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#0a192f"
+          backgroundColor: "#D2B7E5"
         }}>
             
             <div
@@ -258,12 +294,12 @@ const Promptbox = ({name}) => {
                 {renderMessages(messages)}
             </div>
             <div style={{
-              height: "60px",
+              height: "100px",
               // position: "fixed",
               // bottom: '0',
               display:"flex",
               alignItems: "center",
-              backgroundColor: "#0a192f"
+              backgroundColor: "#D2B7E5"
             }}>
               {/* {messageInputField}
               {sendMessageButton} */}

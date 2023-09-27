@@ -24,7 +24,7 @@ const Chat = () => {
 
     return (
         <div className="Chat">
-            <Sidepanel />
+            {/* <Sidepanel /> */}
             <Chats />
             <div className='join'>
                 <Promptbox  name={"LK"}/>

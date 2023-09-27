@@ -38,23 +38,45 @@
 .chats {
     display: flex;
     flex-direction: column;
-    width: 250px;
+    width: 300px;
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
     overflow-y: auto;
-    background-color: #172a46;
+    background-color: #303030;
 }
 
-.each-chat-div {
+.new-chat-button {
+    font-family: 'Poppins';
     padding: 10px;
-    height: 70px;
-    width: 100%;
-    /* border: 1px solid red; */
+    /* height: 80%; */
+    margin: 5px;
+    margin-top: 10px;
+    width: 90%;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 2px solid #D2B7E5;
+    color: #D2B7E5;
+    font-size: medium;
     display: flex;
+    justify-content: center;
+}
+
+.each-chat-button {
+    font-family: 'Poppins';
+    padding: 10px;
+    /* height: 80%; */
+    margin: 5px;
+    width: 90%;
+    border-radius: 5px;
+    border: none;
+    background-color: #D2B7E5;
+    display: flex;
+    /* border: 1px solid red; */
+    /* display: flex;
     justify-content: flex-start;
-    align-items: center;
+    align-items: center; */
 }
 
 .each-chat-li {
@@ -71,10 +93,19 @@
     cursor: pointer;
 }
 
-.divider {
-    width: 80%;
-    height: 0.3px;
-    margin-right: 150x;
-    padding-left: 150px;
-    background-color: #edf5e1;
+.each-chat-div {
+    overflow: scroll;      
+}
+
+.each-chat-div:hover {
+    overflow: scroll;
+}
+
+.monitor-button {
+    font-family: 'Poppins';
+    color: rgb(253, 208, 255);
+    background-color: #303030;
+    padding: 3px 25px;
+    border-radius: 20px;
+    border: none;
 }
