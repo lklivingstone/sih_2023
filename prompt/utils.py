@@ -14,10 +14,26 @@ def pdf_extraction_alg(pdf_file: str) -> [str]:
 
     return pdf_text
 
-def get_summarize_header():
+def get_text_summarization():
 
     header = ""
-    with open("prompt/headers/summarize_prompt_header.txt") as f:
+    with open("prompt/headers/text_summarization.txt") as f:
+        header = f.read()
+
+    return header
+
+def get_science_tech_news():
+
+    header = ""
+    with open("prompt/headers/science_and_tech_and_news.txt") as f:
+        header = f.read()
+
+    return header
+
+def get_grammar_checks():
+
+    header = ""
+    with open("prompt/headers/grammar_checks.txt") as f:
         header = f.read()
 
     return header
