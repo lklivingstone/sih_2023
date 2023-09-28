@@ -33,11 +33,15 @@ const Promptbox = ({name}) => {
             "id": 1,
             "author": "creed",
             "content": "This is the first text"
+
         },
         {
             "id": 2,
             "author": "llm",
-            "content": "This is the second text"
+            "content": "This is the second text",
+            "current": "",
+            "english": "",
+            "hindi": "",
         },
         
     ]);
@@ -82,6 +86,12 @@ const Promptbox = ({name}) => {
         setMessages((prevMessages) => [...prevMessages, message]);
     };
 
+    const changeLanguage = ({e, message}) => {
+        e.preventDefault()
+
+        
+    }
+
 
     const renderMessages = (messages) => {
         return (
@@ -96,15 +106,33 @@ const Promptbox = ({name}) => {
                 justifyContent: message.author === username ? "flex-end" : 'flex-start'
                 }}
                 key={message.id}>
-                        
-                    <Paper variant="outlined" 
-                    style={{padding: "5px 30px", fontWeight: "600"}}
-                    sx={{backgroundColor: "#E4CEFF", color: "#303030"}}
-                    >
-                        {message.content}
-                    </Paper>
-                        {/* </p>
-                    </div> */}
+                    {message.author === username ? (
+                        <Paper
+                        variant="outlined"
+                        style={{ padding: "5px 30px", fontWeight: "600" }}
+                        sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
+                        >
+                        <p>{message.content}</p>
+                        </Paper>
+                    ) : (
+                        <Paper
+                        variant="outlined"
+                        style={{ padding: "5px 30px", fontWeight: "600", position: "relative" }}
+                        sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
+                        >
+                        <p>{message.content}</p>
+                        <button
+                            onClick={({e, message})=>changeLanguage({e, message})}
+                            style={{
+                                position: "absolute",
+                                top: "15px",
+                                right: "15px"
+                            }}
+                        >
+                            Change Language
+                        </button>
+                        </Paper>
+                    )}
               </li>
             ))}
             <div ref={messagesEndRef} />
@@ -112,28 +140,101 @@ const Promptbox = ({name}) => {
         );
       };
 
+    const [ query, setQuery ] = useState("")
   
-    const handleSendMessageClick = async (event) => {
-        if (messageInput.length==0 && !image) {
+    const handleQuerySubmit = async (event) => {
+        event.preventDefault()
+        if (query.length==0 && !image) {
             return;
         }
-        event.preventDefault()
-        const formData = new FormData();
-        formData.append('document', image);
-        
-        try {
-            const config = {
-                headers: {
-                  'Content-Type': 'multipart/form-data'
-                }
-            };
-            
-            const response = await axios.post('http://127.0.0.1:7000/api/prompt/test/', formData, config);
-            // console.log("Clicked")
-        } catch (error) {
-            console.log(error)
 
-            setImage(null)
+        if (image) {
+            const formData = new FormData();
+            formData.append('document', image);
+            
+            try {
+                const config = {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                };
+                
+                const response = await axios.post('http://127.0.0.1:7000/api/prompt/upload-document/', formData, config);
+                
+                // {
+                //     "id": 1,
+                //     "author": "creed",
+                //     "content": "This is the first text"
+                // }
+                
+                // console.log(response)
+                console.log(response["data"])
+    
+    
+                addMessageCallback({
+                    "id": response["data"]["qid"],
+                    "author": "creed",
+                    "content": response["data"]["question"],
+                })
+                
+                addMessageCallback({
+                    "id": response["data"]["aid"],
+                    "author": "llm",
+                    "content": response["data"]["english"] + "\n \n" + response["data"]["hindi"],
+                })
+    
+                setImage(null)
+    
+                // console.log("Clicked")
+            } catch (error) {
+                console.log(error)
+    
+                setImage(null)
+            }
+        }
+        else {
+
+            console.log("clcked")
+            // const formData = new FormData();
+            // formData.append('document', image);
+            
+            try {
+                const config = {
+                    prompt: query
+                };
+                
+                const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', config);
+                
+                // {
+                //     "id": 1,
+                //     "author": "creed",
+                //     "content": "This is the first text"
+                // }
+                
+                // console.log(response)
+
+                console.log(response["data"])
+    
+                addMessageCallback({
+                    "id": response["data"]["qid"],
+                    "author": "creed",
+                    "content": response["data"]["question"],
+                })
+                
+                addMessageCallback({
+                    "id": response["data"]["aid"],
+                    "author": "llm",
+                    "content": response["data"]["english"] + "\n \n" + response["data"]["hindi"],
+                })
+    
+                setImage(null)
+    
+                // console.log("Clicked")
+            } catch (error) {
+                console.log(error)
+    
+                setImage(null)
+            }
         }
 
         
@@ -143,7 +244,7 @@ const Promptbox = ({name}) => {
 
     const handleKeyDown = (e) => {
         if (e.code === "Enter") {
-            handleSendMessageClick(e)
+            // handleSendMessageClick(e)
         }
       };
   
@@ -171,7 +272,7 @@ const Promptbox = ({name}) => {
             id="chat-message-submit"
             type="button"
             value="Send"
-            onClick={(e)=>handleSendMessageClick(e)}
+            // onClick={(e)=>handleSendMessageClick(e)}
         />
     );
 
@@ -203,6 +304,9 @@ const Promptbox = ({name}) => {
 
     const textareaClass = isFocused ? 'focused-textarea' : 'normal-textarea';
 
+
+    // console.log(query)
+
     const messagingField= (
       <>
         <input
@@ -232,15 +336,17 @@ const Promptbox = ({name}) => {
                         backgroundColor: "#303030",
                         position: "relative"
                     }}>
-
-
                         <textarea
+                            onChange={(e)=>setQuery(e.target.value)}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
                             className={textareaClass}
-                            placeholder="Type your message..."
+                            placeholder="Type your query..."
                         />
-                        <SendRoundedIcon style={{
+                        <SendRoundedIcon 
+                            onClick={(e)=>handleQuerySubmit(e)}
+                            style={{
+                                zIndex: 10000,
                             position: "absolute",
                             right: "5px",
                             color: "white",

@@ -55,28 +55,33 @@ CHAT
 }
 
 .focused-textarea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
     border-radius: 5px;
     resize: none;
-    height: 250px;
+    height: 250px; /* You can adjust the initial height as needed */
     width: 100%;
-    overflow-y: hidden;
+    /* Remove or modify overflow-y property to enable scrolling */
     color: white;
     padding: 10px;
     background-color: #303030;
-    transition: height 0.3s ease; /* Add transition property */
+    transition: height 0.3s ease-in-out; /* Add transition property */
     /* Add any other focused styles here */
   }
   
   .normal-textarea {
+    border: none;
     border-radius: 5px;
     resize: none;
-    height: 50px;
+    height: 50px; /* You can adjust the initial height as needed */
     width: 100%;
-    overflow-y: hidden;
+    /* Remove or modify overflow-y property to enable scrolling */
     color: white;
     background-color: #303030;
     padding: 10px;
-    transition: height 0.3s ease; /* Add transition property */
+    transition: height 0.3s ease-in-out; /* Add transition property */
     /* Add any other normal styles here */
   }
   
