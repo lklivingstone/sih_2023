@@ -7,6 +7,7 @@ from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 import requests
 import json
+import os
 from .utils import (
     get_summarize_header,
     pdf_extraction_alg
@@ -15,7 +16,7 @@ from .translate import(
     init_translator,
     get_translation
 )
-import os
+
 
 MODEL = "NousResearch/Nous-Hermes-llama-2-7b"
 TOKENS = 1200
@@ -31,6 +32,7 @@ DATA = {
 HEADERS = {
         "Content-Type": "application/json"
     }
+init_translator()
 
 @sync_to_async
 @api_view(['POST'])
@@ -59,24 +61,19 @@ def sample_view(request):
 def upload_document(request):
     uploaded_file = request.FILES.get('document')
     if uploaded_file:
-        # Add the logic
+        
         header = get_summarize_header()
 
-        # Create a temporary file to store the uploaded PDF
-        # unique_file_name = os.path.join(settings.MEDIA_ROOT, 'uploads', uploaded_file.name)
         root_directory_path = os.getcwd()  # Replace with the actual path
         unique_file_name = os.path.join(root_directory_path, uploaded_file.name)
 
-        # Open a new file on the server using the unique file name
         with open(unique_file_name, 'wb') as destination_file:
-            # Write the content of uploaded_file into the newly created file
             for chunk in uploaded_file.chunks():
                 destination_file.write(chunk)
 
         extracted_text = pdf_extraction_alg(unique_file_name)
 
         os.remove(unique_file_name)
-        print(extracted_text)
 
         prompt = "### Instruction: " + header + "\n" + "### Input: " +  extracted_text + "\nPlease provide a 2-paragraph summary of the above text." + "\n### Response: "
         DATA['prompt'] = prompt
