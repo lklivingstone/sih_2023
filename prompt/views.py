@@ -46,7 +46,6 @@ def upload_document(request):
         # Add the logic
         extracted_text = pdf_extraction_alg(uploaded_file)
         print(extracted_text)
-
         # End the logic
         return JsonResponse({"message": 'Document uploaded successfully', "text": extracted_text}, status=200)
     else:
