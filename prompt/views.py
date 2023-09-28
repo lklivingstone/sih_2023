@@ -7,7 +7,7 @@ from asgiref.sync import sync_to_async
 from django.http import JsonResponse
 import requests
 import json
-from utils import (
+from .utils import (
     get_summarize_header,
     pdf_extraction_alg
 )
