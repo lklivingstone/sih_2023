@@ -17,7 +17,7 @@ from .translate import(
 )
 import os
 
-MODEL = "TheBloke/Llama-2-7b-chat-fp16"
+MODEL = "NousResearch/Nous-Hermes-llama-2-7b"
 TOKENS = 1200
 TEMP = 0.9
 ENDPOINT_URL = "http://localhost:8000/v1/completions"
@@ -75,7 +75,10 @@ def upload_document(request):
 
         extracted_text = pdf_extraction_alg(unique_file_name)
 
-        prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n" + extracted_text + "[/INST]\n"
+        os.remove(unique_file_name)
+        print(extracted_text)
+
+        prompt = "### Instruction: " + header + "\n" + "### Input: " +  extracted_text + "\nPlease provide a 2-paragraph summary of the above text." + "\n### Response: "
         DATA['prompt'] = prompt
 
         response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
@@ -92,9 +95,7 @@ def upload_document(request):
         else:
             print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
             return JsonResponse({"message": 'Error'})
-    # End the logic
-
-        return JsonResponse({"message": 'Document uploaded successfully', "text": extracted_text}, status=200)
+        
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
 
