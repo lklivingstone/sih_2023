@@ -8,6 +8,8 @@ from django.http import JsonResponse
 import requests
 import json
 import os
+import uuid
+
 from .utils import (
     get_summarize_header,
     pdf_extraction_alg
@@ -77,8 +79,8 @@ def upload_document(request):
         os.remove(unique_file_name)
 
         prompt = "### Instruction: " + header + "\n" + \
-                 "### Input: " +  extracted_text + "\nPlease provide a detailed2-paragraph summary of the above text." + \
-                 "\n### Response: "
+                 "### Input: " +  extracted_text + "\nPlease provide a detailed2 -paragraph summary of the above text." + \
+                 "\n### Response:\n"
         DATA['prompt'] = prompt
 
         response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
@@ -88,9 +90,14 @@ def upload_document(request):
             hindi = get_translation(result['choices'][0]['text'])
 
             return JsonResponse({
+                "qid": uuid.uuid1(),
+                "aid": uuid.uuid1(),
+                "question": 'Can you Summarize?',
                 "message": 'Generation Successful',
                 "english": result['choices'][0]['text'],
-                "hindi": hindi}, status=200
+                "hindi": hindi
+                }, 
+                status=200
                 )
         else:
             print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
@@ -105,12 +112,16 @@ def upload_document(request):
 def summarize(request):
 
     header = get_summarize_header()
+    # print(request.body)
     json_data = json.loads(request.body)
+    # print(json_data)
 
+  
     prompt = "### Instruction: " + header + "\n" + \
              "### Input: " +  json_data['prompt'] + "\nPlease provide a detailed 2-paragraph summary of the above text." + \
              "\n### Response: "
 
+    DATA["prompt"] = prompt
     response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
 
     if response.status_code == 200:
@@ -118,11 +129,17 @@ def summarize(request):
         hindi = get_translation(result['choices'][0]['text'])
 
         return JsonResponse({
+            "qid": uuid.uuid1(),
+            "aid": uuid.uuid1(),
+            "question": 'Can you Summarize this:\n' + json_data['prompt'],
             "message": 'Generation Successful',
             "english": result['choices'][0]['text'],
-            "hindi": hindi}, status=200)
+            "hindi": hindi
+            }, 
+            status=200
+            )
     else:
-        print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
+        print("\n",f"Error: {response.status_code} - {response.text}")
         return JsonResponse({"message": 'Error'})
 
 
