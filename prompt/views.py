@@ -73,7 +73,7 @@ def upload_document(request):
             for chunk in uploaded_file.chunks():
                 destination_file.write(chunk)
 
-        extracted_text = pdf_extraction_alg(uploaded_file)
+        extracted_text = pdf_extraction_alg(unique_file_name)
 
         prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n" + extracted_text + "[/INST]\n"
         DATA['prompt'] = prompt
