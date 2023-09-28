@@ -34,6 +34,7 @@ HEADERS = {
     }
 init_translator()
 
+
 @sync_to_async
 @api_view(['POST'])
 def sample_view(request):
@@ -75,7 +76,9 @@ def upload_document(request):
 
         os.remove(unique_file_name)
 
-        prompt = "### Instruction: " + header + "\n" + "### Input: " +  extracted_text + "\nPlease provide a 2-paragraph summary of the above text." + "\n### Response: "
+        prompt = "### Instruction: " + header + "\n" + \
+                 "### Input: " +  extracted_text + "\nPlease provide a detailed2-paragraph summary of the above text." + \
+                 "\n### Response: "
         DATA['prompt'] = prompt
 
         response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
@@ -104,8 +107,9 @@ def summarize(request):
     header = get_summarize_header()
     json_data = json.loads(request.body)
 
-    prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n"+ json_data['prompt'] + "[/INST]\n"
-    DATA['prompt'] = prompt
+    prompt = "### Instruction: " + header + "\n" + \
+             "### Input: " +  json_data['prompt'] + "\nPlease provide a detailed 2-paragraph summary of the above text." + \
+             "\n### Response: "
 
     response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
 

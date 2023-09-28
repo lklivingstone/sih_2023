@@ -18,6 +18,7 @@ def pdf_extraction_alg(pdf_file: str) -> str:
         output_string += item
     return output_string
 
+
 def get_summarize_header():
 
     header = ""
@@ -25,6 +26,7 @@ def get_summarize_header():
         header = f.read()
 
     return header
+
 
 def get_text_summarization():
 
@@ -34,6 +36,7 @@ def get_text_summarization():
 
     return header
 
+
 def get_science_tech_news():
 
     header = ""
@@ -41,6 +44,7 @@ def get_science_tech_news():
         header = f.read()
 
     return header
+
 
 def get_grammar_checks():
 
