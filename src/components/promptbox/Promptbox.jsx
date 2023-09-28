@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import ChatInput from '../chatInput/ChatInput';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 
 const { reverse } = Array;
 
@@ -98,7 +99,7 @@ const Promptbox = ({name}) => {
                         
                     <Paper variant="outlined" 
                     style={{padding: "5px 30px", fontWeight: "600"}}
-                    sx={{backgroundColor: "#172a46", border: "1px solid #64ffdb", color: "white"}}
+                    sx={{backgroundColor: "#E4CEFF", color: "#303030"}}
                     >
                         {message.content}
                     </Paper>
@@ -190,6 +191,18 @@ const Promptbox = ({name}) => {
         fileInputRef.current.click();
     };
 
+    const [isFocused, setIsFocused] = React.useState(false);
+
+    const handleFocus = () => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+    };
+
+    const textareaClass = isFocused ? 'focused-textarea' : 'normal-textarea';
+
     const messagingField= (
       <>
         <input
@@ -208,69 +221,39 @@ const Promptbox = ({name}) => {
                         <CloudDoneOutlinedIcon fontSize="large" /> 
                         }
                     </button>
-                    <div>
+                    <div style={{
+                        width: "80%",
+                        padding: 0,
+                        margin: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "5px",
+                        backgroundColor: "#303030",
+                        position: "relative"
+                    }}>
+
+
                         <textarea
-                        
-                        style={{
-                            resize: "none",
-                            minHeight: "50px",
-                            maxHeight: "400px",
-                            width: "70%",
-                            overflowY: "hideen",
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            className={textareaClass}
+                            placeholder="Type your message..."
+                        />
+                        <SendRoundedIcon style={{
+                            position: "absolute",
+                            right: "5px",
                             color: "white",
-                            backgroundColor: "#303030"
-                        }}
-                         />
+                            bottom: "13px"
+
+                        }} /> 
                     </div>
-        {/* <ChatInput /> */}
-        {/* <Paper
-          elevation={0} 
-          variant="outlined" square
-          component="form"
-        sx={{border: "2", borderColor: '#64ffdb', backgroundColor: "#031d3b", borderRadius: "250px",  display: 'flex', alignItems: 'center', justifyContent: "center", width: "25%" }}
-        // sx={{borderColor: 'green', border: "1", backgroundColor: "transparent", borderRadius: "250px",  display: 'flex', alignItems: 'center', width: "100%" }}
-      
-      >
-                <input
-                type="file"
-                // style={{ display: 'none' }}
-                style={{ width: "150px"}}
-                ref={fileInputRef}
-                onChange={(e)=>handleFileInputChange(e)}
-                />
-                    <button 
-                    className="upload-icon" 
-                    onClick={handleButtonClick}>
-                        {
-                        !image ? <FileUploadOutlinedIcon fontSize="large"  /> : 
-                        <CloudDoneOutlinedIcon fontSize="large" /> 
-                        }
-                    </button>
-        
-      </Paper>
-        <Paper
-            elevation={0} 
-            variant="outlined" square
-            component="form"
-            sx={{border: "2", borderColor: '#64ffdb', backgroundColor: "#031d3b", borderRadius: "250px",  display: 'flex', alignItems: 'center', justifyContent: "center", width: "75%" }}
-            // sx={{borderColor: 'green', border: "1", backgroundColor: "transparent", borderRadius: "250px",  display: 'flex', alignItems: 'center', width: "100%" }}
-        
-        >
-            <InputBase
-            sx={{ ml: 1, flex: 1, variant:"outlined", color: "white", paddingLeft: "10px"}}
-            placeholder="type..."
-            value={messageValue}
-            onChange={(e)=>hangleMessageInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            />
-            <IconButton type="button" sx={{ color: "#2c527d" }} aria-label="search">
-                <SendOutlinedIcon onClick={(e)=>handleSendMessageClick(e)}/>
-            </IconButton>
-            
-        </Paper> */}
       </>
 
   )
+
+
+
     
     return (
         <div style={{
@@ -279,7 +262,8 @@ const Promptbox = ({name}) => {
           paddingTop: "70px",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#D2B7E5"
+          backgroundColor: "#D2B7E5",
+          position: "relative"
         }}>
             
             <div
@@ -294,12 +278,17 @@ const Promptbox = ({name}) => {
                 {renderMessages(messages)}
             </div>
             <div style={{
-              height: "100px",
+              height: "280px",
+              width: "100%",
               // position: "fixed",
               // bottom: '0',
-              display:"flex",
-              alignItems: "center",
-              backgroundColor: "#D2B7E5"
+                        display: "flex",
+                        alignItems: "flex-end",
+                        // justifyContent: "center",
+            //   backgroundColor: "#D2B7E5",
+              position: "absolute",
+              bottom: "0",
+            //   zIndex: "-1"
             }}>
               {/* {messageInputField}
               {sendMessageButton} */}

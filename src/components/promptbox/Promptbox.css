@@ -53,3 +53,30 @@ CHAT
     align-items: center;
     justify-content: space-around;
 }
+
+.focused-textarea {
+    border-radius: 5px;
+    resize: none;
+    height: 250px;
+    width: 100%;
+    overflow-y: hidden;
+    color: white;
+    padding: 10px;
+    background-color: #303030;
+    transition: height 0.3s ease; /* Add transition property */
+    /* Add any other focused styles here */
+  }
+  
+  .normal-textarea {
+    border-radius: 5px;
+    resize: none;
+    height: 50px;
+    width: 100%;
+    overflow-y: hidden;
+    color: white;
+    background-color: #303030;
+    padding: 10px;
+    transition: height 0.3s ease; /* Add transition property */
+    /* Add any other normal styles here */
+  }
+  
