@@ -17,15 +17,7 @@ def pdf_extraction_alg(pdf_file: str) -> [str]:
 def get_summarize_header():
 
     header = ""
-    with open("headers/summarize_prompt_header.txt") as f:
-        header = f.read()
-
-    return header
-
-def get_summarize_doc_header():
-
-    header = ""
-    with open("headers/summarize_doc_prompt_header.txt") as f:
+    with open("prompt/headers/summarize_prompt_header.txt") as f:
         header = f.read()
 
     return header
