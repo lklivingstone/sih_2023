@@ -19,8 +19,5 @@ def get_translation(message:str) -> str:
 
 
 if __name__ == '__main__':
-    argostranslate.package.update_package_index()
-    available_packages = argostranslate.package.get_available_packages()
-    install_package = next(filter(lambda x: x.from_code == FROM_LANG and x.to_code == TO_LANG, available_packages))
-    argostranslate.package.install_from_path(install_package.download())
+    init_translator()
     print(get_translation("Hi there, this is Rohan"))

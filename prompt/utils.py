@@ -21,3 +21,11 @@ def get_summarize_header():
         header = f.read()
 
     return header
+
+def get_summarize_doc_header():
+
+    header = ""
+    with open("headers/summarize_doc_prompt_header.txt") as f:
+        header = f.read()
+
+    return header

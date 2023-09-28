@@ -11,10 +11,26 @@ from .utils import (
     get_summarize_header,
     pdf_extraction_alg
 )
+from .translate import(
+    init_translator,
+    get_translation
+)
+import os
 
 MODEL = "TheBloke/Llama-2-7b-chat-fp16"
 TOKENS = 1200
 TEMP = 0.9
+ENDPOINT_URL = "http://localhost:8000/v1/completions"
+
+DATA = {
+        "model": MODEL,
+        "max_tokens": TOKENS,
+        "temperature": TEMP
+    }
+
+HEADERS = {
+        "Content-Type": "application/json"
+    }
 
 @sync_to_async
 @api_view(['POST'])
@@ -44,9 +60,40 @@ def upload_document(request):
     uploaded_file = request.FILES.get('document')
     if uploaded_file:
         # Add the logic
+        header = get_summarize_header()
+
+        # Create a temporary file to store the uploaded PDF
+        # unique_file_name = os.path.join(settings.MEDIA_ROOT, 'uploads', uploaded_file.name)
+        root_directory_path = os.getcwd()  # Replace with the actual path
+        unique_file_name = os.path.join(root_directory_path, uploaded_file.name)
+
+        # Open a new file on the server using the unique file name
+        with open(unique_file_name, 'wb') as destination_file:
+            # Write the content of uploaded_file into the newly created file
+            for chunk in uploaded_file.chunks():
+                destination_file.write(chunk)
+
         extracted_text = pdf_extraction_alg(uploaded_file)
-        print(extracted_text)
-        # End the logic
+
+        prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n" + extracted_text + "[/INST]\n"
+        DATA['prompt'] = prompt
+
+        response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
+
+        if response.status_code == 200:
+            result = response.json()
+            hindi = get_translation(result['choices'][0]['text'])
+
+            return JsonResponse({
+                "message": 'Generation Successful',
+                "english": result['choices'][0]['text'],
+                "hindi": hindi}, status=200
+                )
+        else:
+            print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
+            return JsonResponse({"message": 'Error'})
+    # End the logic
+
         return JsonResponse({"message": 'Document uploaded successfully', "text": extracted_text}, status=200)
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
@@ -60,24 +107,18 @@ def summarize(request):
     json_data = json.loads(request.body)
 
     prompt = "<<SYS>>" + header + "<</SYS>>" + "\n[INST]" + "Please provide a summary of the following text:\n"+ json_data['prompt'] + "[/INST]\n"
-    endpoint_url = "http://localhost:8000/v1/completions"
+    DATA['prompt'] = prompt
 
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    data = {
-        "model": MODEL,
-        "prompt": prompt,
-        "max_tokens": TOKENS,
-        "temperature": TEMP
-    }
-
-    response = requests.post(endpoint_url, json=data, headers=headers)
+    response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
 
     if response.status_code == 200:
         result = response.json()
-        return JsonResponse({"message": 'Generation Successful',"data":result['choices'][0]['text']}, status=200)
+        hindi = get_translation(result['choices'][0]['text'])
+
+        return JsonResponse({
+            "message": 'Generation Successful',
+            "english": result['choices'][0]['text'],
+            "hindi": hindi}, status=200)
     else:
         print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
         return JsonResponse({"message": 'Error'})
