@@ -1,39 +1,24 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import time
 import subprocess
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
-import requests
 import json
 import os
 import uuid
 
 from .utils import (
     get_summarize_header,
-    pdf_extraction_alg
+    get_grammar_checks,
+    pdf_extraction_alg,
+    request_response
 )
 from .translate import(
-    init_translator,
-    get_translation
+    init_translator
 )
 
 
-MODEL = "NousResearch/Nous-Hermes-llama-2-7b"
-TOKENS = 1200
-TEMP = 0.9
-ENDPOINT_URL = "http://localhost:8000/v1/completions"
-
-DATA = {
-        "model": MODEL,
-        "max_tokens": TOKENS,
-        "temperature": TEMP
-    }
-
-HEADERS = {
-        "Content-Type": "application/json"
-    }
 init_translator()
 
 
@@ -66,43 +51,27 @@ def upload_document(request):
     if uploaded_file:
         
         header = get_summarize_header()
-
-        root_directory_path = os.getcwd()  # Replace with the actual path
-        unique_file_name = os.path.join(root_directory_path, uploaded_file.name)
-
-        with open(unique_file_name, 'wb') as destination_file:
-            for chunk in uploaded_file.chunks():
-                destination_file.write(chunk)
-
-        extracted_text = pdf_extraction_alg(unique_file_name)
-
-        os.remove(unique_file_name)
+        extracted_text = pdf_extraction_alg(uploaded_file)
 
         prompt = "### Instruction: " + header + "\n" + \
                  "### Input: " +  extracted_text + "\nPlease provide a detailed2 -paragraph summary of the above text." + \
                  "\n### Response:\n"
-        DATA['prompt'] = prompt
-
-        response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
-
-        if response.status_code == 200:
-            result = response.json()
-            hindi = get_translation(result['choices'][0]['text'])
-
+        
+        result = request_response(prompt)
+        
+        if result == -1:
+            return JsonResponse({"message": 'Error'})
+        else:
             return JsonResponse({
                 "qid": uuid.uuid1(),
                 "aid": uuid.uuid1(),
                 "question": 'Can you Summarize?',
                 "message": 'Generation Successful',
-                "english": result['choices'][0]['text'],
-                "hindi": hindi
+                "english": result['english'],
+                "hindi": result['hindi']
                 }, 
                 status=200
                 )
-        else:
-            print(prompt,"\n",f"Error: {response.status_code} - {response.text}")
-            return JsonResponse({"message": 'Error'})
-        
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
 
@@ -112,35 +81,55 @@ def upload_document(request):
 def summarize(request):
 
     header = get_summarize_header()
-    # print(request.body)
     json_data = json.loads(request.body)
-    # print(json_data)
-
   
     prompt = "### Instruction: " + header + "\n" + \
              "### Input: " +  json_data['prompt'] + "\nPlease provide a detailed 2-paragraph summary of the above text." + \
              "\n### Response: "
 
-    DATA["prompt"] = prompt
-    response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
+    result = request_response(prompt)
 
-    if response.status_code == 200:
-        result = response.json()
-        hindi = get_translation(result['choices'][0]['text'])
-
+    if result == -1:
+            return JsonResponse({"message": 'Error'})
+    else:
         return JsonResponse({
             "qid": uuid.uuid1(),
             "aid": uuid.uuid1(),
-            "question": 'Can you Summarize this:\n' + json_data['prompt'],
+            "question": json_data['prompt'],
             "message": 'Generation Successful',
-            "english": result['choices'][0]['text'],
-            "hindi": hindi
+            "english": result['english'],
+            "hindi": result['hindi']
             }, 
             status=200
             )
+    
+
+@sync_to_async
+@api_view(['POST'])  
+def check_grammar(request):
+
+    header = get_grammar_checks()
+    json_data = json.loads(request.body)
+  
+    prompt = "### Instruction: " + header + "\n" + \
+             "### Input: " +  json_data['prompt'] + "\nPlease perform grammar checks on this text and return the reformatted version with minimal changes to make it grammatically correct." + \
+             "\n### Response: "
+
+    result = request_response(prompt)
+
+    if result == -1:
+            return JsonResponse({"message": 'Error'})
     else:
-        print("\n",f"Error: {response.status_code} - {response.text}")
-        return JsonResponse({"message": 'Error'})
+        return JsonResponse({
+            "qid": uuid.uuid1(),
+            "aid": uuid.uuid1(),
+            "question": json_data['prompt'],
+            "message": 'Generation Successful',
+            "english": result['english'],
+            "hindi": result['hindi']
+            }, 
+            status=200
+            )
 
 
 @api_view(['GET'])
