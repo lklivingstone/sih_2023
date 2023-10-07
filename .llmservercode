@@ -1,0 +1,22 @@
+python3 -m vllm.entrypoints.openai.api_server \
+    --model NousResearch/Nous-Hermes-llama-2-7b
+    
+python3 -m vllm.entrypoints.openai.api_server \
+    --model TheBloke/Nous-Hermes-Llama2-GPTQ 
+    
+TheBloke/Nous-Hermes-Llama2-GPTQ
+    'curl',
+        'http://localhost:8000/v1/completions',
+        '-H', 'Content-Type: application/json',
+        '-d', '{"model": "NousResearch/Nous-Hermes-llama-2-7b", "prompt": "Summarize the advances in quantum computing in terms of codebreaking in cryptography. Do this for about 200 tokens in three indian languages.", "max_tokens": 700, "temperature": 0.9}'
+        
+curl http://localhost:8000/v1/completions -H "Content-Type: application/json" -d '{"model": "TheBloke/Llama-2-7b-chat-fp16,"prompt": "San Francisco is", "max_tokens": 700, "temperature": 0.9}
+
+curl http://localhost:8000/v1/completions \
+    -H "Content-Type: application/json" \
+    -d '{
+        "model": "TheBloke/Llama-2-7b-chat-fp16",
+        "prompt": "San Francisco is a",
+        "max_tokens": 700,
+        "temperature": 0
+    }'

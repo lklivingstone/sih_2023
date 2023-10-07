@@ -1,0 +1,240 @@
+
+
+Citation: Liu, Z.; Ren, K.; Dai, G.;
+Zhang, J. A Review on Micro-LED
+Display Integrating Metasurface
+Structures. Micromachines 2023 ,14,
+1354. https://doi.org/10.3390/
+mi14071354
+Academic Editors: Zeheng Wang
+and Jingkai Huang
+Received: 9 June 2023
+Revised: 27 June 2023
+Accepted: 29 June 2023
+Published: 30 June 2023
+Copyright: © 2023 by the authors.
+Licensee MDPI, Basel, Switzerland.
+This article is an open access article
+distributed under the terms and
+conditions of the Creative Commons
+Attribution (CC BY) license (https://
+creativecommons.org/licenses/by/
+4.0/).
+micromachines 
+Review
+A Review on Micro-LED Display Integrating
+Metasurface Structures
+Zhaoyong Liu1,2,3
+, Kailin Ren1,2,3, Gaoyu Dai1,2,3
+and Jianhua Zhang1,2,3,*
+1School of Microelectronics, Shanghai University, Shanghai 200444, China; lzyly@shu.edu.cn (Z.L.);
+renkailin@shu.edu.cn (K.R.); gaoyudai@shu.edu.cn (G.D.)
+2Key Laboratory of Advanced Display and System Applications (Ministry of Education), Shanghai University,
+Shanghai
+
+
+
+200444, China
+3Shanghai Key Laboratory of Chips and Systems for Intelligent Connected Vehicle, Shanghai University,
+Shanghai 200444, China
+*Correspondence: jhzhang@shu.edu.cn
+Abstract: Micro-LED display technology has been considered a promising candidate for near-eye
+display applications owing to its superior performance, such as having high brightness, high resolu-
+tion, and high contrast. However, the realization of polarized and high-efﬁciency light extraction
+from Micro-LED arrays is still a signiﬁcant problem to be addressed. Recently, by exploiting the
+capability of metasurfaces in wavefront modulation, researchers have achieved many excellent results
+by integrating metasurface structures with Micro-LEDs, including improving the light extraction
+efﬁciency, controlling the emission angle to achieve directional emission, and obtaining polarized
+Micro-LEDs. In this paper, recent progressions on Micro-LEDs integrated with metasurface structures
+are reviewed in the above three aspects,
+
+
+
+and the similar applications of metasurface structures in
+organic LEDs, quantum dot LEDs, and perovskite LEDs are also summarized.
+Keywords: Micro-LED; metasurface; light extraction efﬁciency; angular deﬂection; polarization
+1. Introduction
+Micro-LEDs have attracted much attention owing to their advantages of high luminous
+intensity, high resolution, high contrast, fast response speed, long lifespan, and low power
+consumption. Due to these excellent performance traits, Micro-LEDs are regarded as the
+mainstream of next-generation display technology for a wide range of applications, from
+wearable devices such as wristbands and watches to commercial billboards, public displays,
+and virtual reality (VR) or augmented reality (AR) devices [ 1–5]. However, challenges
+have also arisen with the development of Micro-LED display technology, such as mass
+transfer, full-color display, and size-dependent efﬁciency [ 6,7]. The luminous efﬁciency of
+Micro-LEDs decreases rapidly as the size decreases, so
+
+
+
+it is necessary to improve the light
+extraction efﬁciency (LEE) to improve the external quantum efﬁciency (EQE) [ 8]. Nowadays,
+there are many methods to improve LEE. This paper mainly reviews the approaches to
+integrating metasurface structures on Micro-LEDs.
+The metasurface is an artiﬁcial nanostructure that is designed to control the amplitude,
+polarization, and phase of incident waves at the subwavelength scale [9–12]. Metasurface
+structures can realize the above functions with the premise that the incident light must be
+coherent [ 13]. However, a typical Micro-LED exhibits Lambertian-shaped emission [ 14].
+Light emitted in any direction has very low spatial coherence, so it is a key issue to
+realize control of the Micro-LED wavefront with metasurface. Therefore, the researchers
+introduced reﬂective mirrors at the bottom and top of the Micro-LED to form a Fabry–Perot
+(F-P) cavity structure [ 13], so that the emitted light is concentrated in a narrow angular
+range after resonance selection
+
+
+
+through the cavity, which can enhance the spatial coherence
+of the emitted light, and the collimation of the emitted light also improves the LEE. In this
+Micromachines 2023 ,14, 1354. https://doi.org/10.3390/mi14071354 https://www.mdpi.com/journal/micromachinesMicromachines 2023 ,14, 1354 2 of 18
+case, the integration with the metasurface structures can realize the deﬂection of the beam
+angle, and the light can be emitted to the preset position to fully utilize the emitted light.
+In addition, Micro-LEDs that emit polarized light play a key role in near-eye displays,
+but obtaining polarized emission from LEDs requires complex design and manufactur-
+ing [ 15]. Moreover, obtaining polarized light emission is difﬁcult due to the weak anisotropy
+of Micro-LEDs, so wave plates are needed to improve the anisotropy of Micro-LEDs. How-
+ever, traditional wave plates are not conducive to Micro-LED integration due to their large
+size. The appearance of the metasurface structures solves these problems
+
+
+
+because of their
+small size and simple implementation process [ 16]. Moreover, the combination of metasur-
+face structures and optical gratings can realize linear and circular polarization. This paper
+reviews the research progress of Micro-LEDs integrated with metasurface structures in
+improving the LEE, collimation, controlling angle deﬂection, and controlling polarization.
+The latest research results in the four directions mentioned above are demonstrated in
+Figure 1.
+Micromachines  2023, 14, x FOR PEER REVIEW   2 of 19 
+ 
+ spatial coherence  of the emitted light, and the collimation  of the emitted light also im‐
+proves the LEE. In this case, the integration  with the metasurface  structures  can realize 
+the deflection  of the beam angle, and the light can be emitted to the preset position to fully 
+utilize the emitted light. 
+In addition,  Micro‐LEDs that emit polarized  light play a key role in near‐eye displays,  
+but obtaining  polarized  emission  from LEDs requires complex  design and manufacturing
+
+
+
+ 
+[15]. Moreover,  obtaining  polarized  light emission  is difficult due to the weak anisotropy  
+of Micro‐LEDs, so wave plates are needed to improve  the anisotropy  of Micro‐LEDs. 
+However,  traditional  wave plates are not conducive  to Micro‐LED integration  due to their 
+large size. The appearance  of the metasurface  structures  solves these problems  because of 
+their small size and simple implementation  process [16]. Moreover,  the combination  of 
+metasurface  structures  and optical gratings can realize linear and circular polarization.  
+This paper reviews the research progress  of Micro‐LEDs integrated  with metasurface  
+structures  in improving  the LEE, collimation,  controlling  angle deflection,  and controlling  
+polarization.  The latest research results in the four directions  mentioned  above are demon‐
+strated in Figure 1. 
+ 
+Figure 1. A list of four research directions  for LEDs integrated  with metasurface.  (a) Disordered  Ag 
+nanoparticle  metasurface  to improve
+
+
+
+ the LEE of LEDs. Reproduced  with permission  from [17], 
+[Light: Science & Applications ]; published  by Nature Publishing  Group, 2021. (b) Distributed  Bragg 
+reflector (DBR) resonator  to improve  the emitted light collimation  of Micro‐LEDs. Reproduced  with 
+permission  from [18], [Applied Physics Letters ]; published  by AIP Publishing,  2022. (c) Metasurface  
+structures  to achieve directed light emission  of Micro‐LEDs. Adapted  with permission  from [19] © 
+The Optical Society. (d) Metasurface  and grating to improve  the extinction  ratio (ER) of polarized  
+Micro‐LEDs. Adapted  with permission  from [15] © The Optical Society. 
+2. Improvement  in Light Extraction  Efficiency  
+As one of the important  performance  indicators  of Micro‐LEDs, EQE refers to the 
+ratio of the final emitted photon number to the injected carrier number, which can be ob‐
+tained by the product of the LEE and internal quantum  efficiency  (IQE). Therefore,  EQE 
+can be improved  by improving  the LEE. Currently,
+
+
+
+ methods  to improve  the LEE of Micro‐
+LEDs include flip chip technology,  transparent  substrate  technology,  patterned  substrate  
+technology,  surface microstructure  technology,  and bottom reflector technology  [20–22]. 
+This paper mainly introduces  metasurface  structures  to improve  the LEE and summarizes  
+them in this chapter (listed in Table 1). 
+Figure 1. A list of four research directions for LEDs integrated with metasurface. ( a) Disordered
+Ag nanoparticle metasurface to improve the LEE of LEDs. Reproduced with permission from [ 17],
+[Light: Science & Applications ]; published by Nature Publishing Group, 2021. ( b) Distributed Bragg
+reﬂector (DBR) resonator to improve the emitted light collimation of Micro-LEDs. Reproduced with
+permission from [ 18], [Applied Physics Letters ]; published by AIP Publishing, 2022. ( c) Metasurface
+structures to achieve directed light emission of Micro-LEDs. Adapted with permission from [ 19]©
+The Optical Society. ( d) Metasurface and grating
+
+
+
+to improve the extinction ratio (ER) of polarized
+Micro-LEDs. Adapted with permission from [15] © The Optical Society.
+2. Improvement in Light Extraction Efﬁciency
+As one of the important performance indicators of Micro-LEDs, EQE refers to the
+ratio of the ﬁnal emitted photon number to the injected carrier number, which can be
+obtained by the product of the LEE and internal quantum efﬁciency (IQE). Therefore, EQE
+can be improved by improving the LEE. Currently, methods to improve the LEE of Micro-
+LEDs include ﬂip chip technology, transparent substrate technology, patterned substrate
+technology, surface microstructure technology, and bottom reﬂector technology [ 20–22].
+This paper mainly introduces metasurface structures to improve the LEE and summarizes
+them in this chapter (listed in Table 1).Micromachines 2023 ,14, 1354 3 of 18
+Table 1. Summary of research on metasurface structure to improve the LEE of LEDs.
+Research Objective LED Type WavelengthOptimized
+Structure ModelSimulation or
+ExperimentRef.
+Improve
+
+
+
+LEE LED 440~470 nmDisordered Ag
+nanoparticlesSimulation and
+experiment[17]
+Improve LEE PeLED 780 nmNanobricks in the
+electron transport
+layerSimulation [23]
+Improve LEE OLED 440~570 nmSpeckle image
+holography
+metasurfacesSimulation and
+experiment[24]
+Improve LEE OLED 470~630 nmReﬂected
+supergratingSimulation and
+experiment[25,26]
+Improve LEE OLED 450~650 nmBottom nanoslot
+metasurfaceSimulation and
+experiment[27]
+Improve LEE Micro-OLED 640 nmMetalens
+embedding the
+glass substrateSimulation [28]
+Study the inﬂuence of
+wavelength and material
+on the SIH metasurface
+to improve LEEOLED 440~670 nm SIH metasurfacesSimulation and
+experiment[29]
+2.1. Improvement in the LEE by Metasurface Structures
+Since the refractive index of the surface material of Micro-LEDs is much larger than
+that of air, the full reﬂection angle of the light emitted by Micro-LEDs into the air is very
+small, causing total reﬂection phenomena to very easily appear, which is also one of the
+reasons for the low LEE [ 30]. The
+
+
+
+integrated metasurface structures on the top surface of
+Micro-LEDs can not only effectively expand the light emitting area of Micro-LEDs, but
+also change the incident angle of light on the inner surface of the semiconductor, thus
+destroying the total reﬂection condition of part of the light so as to signiﬁcantly improve
+the LEE.
+Mao et al. proposed disordered metasurface LEDs by studying the distribution and
+size of the cuticle fringes in ﬁreﬂies [ 17]. The metasurface structure changed from an
+orderly arrangement of square gratings to a curved top surface, then to a disordered
+arrangement, and was ﬁnally designed as Ag nanoparticles with a curved top surface and
+disordered arrangement (see Figure 2a). LEDs with Ag-free nanoparticles were compared
+with those with Ag nanoparticles. Figure 2b,c show the photoluminescence (PL) and
+electroluminescence (EL) spectra with and without Ag nanoparticles, respectively. The
+results showed that Ag nanoparticles enhanced PL and EL by 170% and 140%, respectively.
+The
+
+
+
+wavelength of the experiment in this paper can also be obtained from Figure 2b,c by
+taking the full width at half-maximum (FWHM); the wavelength is found to be 440~470 nm ,
+and it is listed in Table 1. The wavelengths of all tables in this review are derived from
+this. When the working wavelength is 452 nm, the output power of the LED with Ag
+nanoparticles is increased by 2.7 times, and the absolute EQE is increased from 31% to 51%
+(see Figure 2d,e). In addition, the top metasurface structure can be made in one step by
+the gas cluster technology, which reduces the complexity of the process and has a good
+application prospect.
+
