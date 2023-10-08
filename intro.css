@@ -159,11 +159,17 @@ li a:hover {
 }
 
 .images {
-    width: 80%;
-    margin-left: auto;
+    width: 60%;
+    margin-left: auto; 
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
+    text-align: center;
     z-index: -1;
 }
+
 
 .dark-mode {
     background-color: var(--primary-dark);
