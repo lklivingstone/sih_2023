@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const userSlice = createSlice({
-    name: "user_details",
+    name: "user",
     initialState: {
-        user: null,
+        username: null,
+        user_id: null,
         token: null,
         isFetching: false,
         error: false
@@ -15,15 +16,17 @@ const userSlice = createSlice({
         loginSuccess: (state, action)=> {
             state.isFetching = false
             state.error = false
-            state.user = action.payload
-            state.token = action.payload["accessToken"]
+            state.username = action.payload["username"]
+            state.user_id = action.payload["user_id"]
+            state.token = action.payload["access_token"]
         },
         loginFailure: (state) => {
             state.isFetching= false
             state.error= true
         },
         logOut: (state)=> {
-            state.user= null
+            state.username= null
+            state.user_id= null
             state.token= null
         }
     }

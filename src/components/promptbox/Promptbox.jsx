@@ -1,6 +1,6 @@
 import './Promptbox.css';
 import React, { useEffect, useRef, useState } from 'react';
-// import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // import { useSelector } from 'react-redux';
 import SendButton from '../sendButton/SendButton';
 import Divider from '@mui/material/Divider';
@@ -16,63 +16,115 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import ChatInput from '../chatInput/ChatInput';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
+import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
+import { Wobble } from '@uiball/loaders'
+
 
 const { reverse } = Array;
 
 const Promptbox = ({name}) => {
-    // const ID= useSelector((state)=>state.user.chatID)
-    const ID= 1;
-    // const recipient= useSelector((state)=>state.user.recipient)
+    // const ID = useSelector((state)=>state.user.chatID)
+    const ID = 1;
+    const location= useLocation();
+    const chat_id= location.pathname.split("/")[2];
+    console.log(chat_id)
+    // const recipient = useSelector((state)=>state.user.recipient)
     const [messageInput, setMessageInput] = useState('');
     const [messageValue, setMessageValue]= useState('');
+    const [tempMessage, setTempMessage]= useState('');
     
     // const username = useSelector((state) => state.user.user.username);
     const username = "creed";
     const [messages, setMessages] = useState([
-        {
-            "id": 1,
-            "author": "creed",
-            "content": "This is the first text"
+        // {
+        //     "id": 1,
+        //     "author": "creed",
+        //     "content": "This is the first text"
 
-        },
-        {
-            "id": 2,
-            "author": "llm",
-            "content": "This is the second text",
-            "current": "",
-            "english": "",
-            "hindi": "",
-        },
-        
+        // },
+        // {
+        //     "id": 2,
+        //     "author": "llm",
+        //     "currIndex" : 0,
+        //     "totalLangs" : 2,
+        //     'langs' : ['English', 'Hindi'],
+        //     "content": {
+        //         'English' : "This is second text",
+        //         'Hindi' : "Hindi This is second text"
+        //     }
+        // },
+
     ]);
     const messagesEndRef = useRef(null)
-
+    const addMessageCallback = (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+    };
+    
     const scrollToBottom = () => {
       messagesEndRef.current?.scrollIntoView()
     }
 
-    // useEffect(() => {
-    //     const waitForSocketConnection = (callback) => {
-    //     setTimeout(() => {
-    //         if (WebSocketInstance.state() === 1) {
-    //         console.log("Connection is secure");
-    //         if (callback != null) {
-    //             callback();
-    //         }
-    //         return;
-    //         } else {
-    //         console.log("Waiting for connection...");
-    //         waitForSocketConnection(callback);
-    //         }
-    //     }, 100);
-    //     };
+    useEffect(() => {
 
-    //     WebSocketInstance.addCallbacks(setMessagesCallback, addMessageCallback);
-    //     waitForSocketConnection(() => {
-    //         WebSocketInstance.fetchMessages(username, ID);
-    //     });
-    //     WebSocketInstance.connect(ID)
-    // }, [ID]);
+        const getChatsFunction = async () => {
+
+            try {
+                if (chat_id) {
+    
+                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-chat-id/?chat_id=${chat_id}`);
+                    console.log(response.data)
+                    const responseData = response.data
+                    responseData.forEach((item) => {
+                        console.log(item)
+                        // const string = "['English', 'Hindi']";
+        
+                        // Create a regular expression to match the English and Hindi languages.
+                        item['langs'] = item['langs'].slice(1, -1);
+                        const regex = /'([^']+)'/g;
+                        const matches = [];
+        
+                        let match;
+                        while ((match = regex.exec(item['langs'])) !== null) {
+                        matches.push(match[1]);
+                        }
+        
+                        item['langs'] = matches
+        
+                        if (item['prompt'].substring(0, 9) === '***DOC***') {
+                            addMessageCallback({
+                                "id": item['chat_id']+"u",
+                                "author": "creed",
+                                "content": "DOC",
+                            })
+                        }
+                        else {
+                            addMessageCallback({
+                                "id": item['chat_id']+"u",
+                                "author": "creed",
+                                "content": item['prompt'],
+                            })
+                        }
+                        
+                        addMessageCallback({
+                            "id": item['chat_id']+"m",
+                            "author": "llm",
+                            "currIndex" : 0,
+                            "totalLangs" : item['langs'].length,
+                            'langs' : item['langs'],
+                            'timestamp' : item['timestamp'],
+                            "content": item['ans']
+                        })
+                    })
+                }
+            }
+            catch (err) {
+    
+            }
+        }
+        getChatsFunction()
+    }, []);
 
     useEffect(() => {
         scrollToBottom()
@@ -82,9 +134,6 @@ const Promptbox = ({name}) => {
         setMessages((prevMessages) => [...newMessages.reverse()]);
     };
 
-    const addMessageCallback = (message) => {
-        setMessages((prevMessages) => [...prevMessages, message]);
-    };
 
     const changeLanguage = ({e, message}) => {
         e.preventDefault()
@@ -92,11 +141,53 @@ const Promptbox = ({name}) => {
         
     }
 
+    const handleArrowLeftClick = (message, index) => {
+        // Get the current value of currIndex.
+        const currentCurrIndex = message.currIndex;
+      
+        // Reduce the value of currIndex by 1.
+        const newCurrIndex = currentCurrIndex - 1;
+      
+        // If the newCurrIndex is less than 0, set it to the total number of languages - 1.
+        const finalCurrIndex = newCurrIndex < 0 ? message.totalLangs - 1 : newCurrIndex;
+      
+        // Update the currIndex of the message.
+        const updatedMessage = { ...message, currIndex: finalCurrIndex };
+      
+        // Set the updated message in the messages state.
+        setMessages((messages) => {
+          const newMessages = [...messages];
+          newMessages[index] = updatedMessage;
+          return newMessages;
+        });
+    };
 
+    const handleArrowRightClick = (message, index) => {
+        // Get the current value of currIndex.
+        const currentCurrIndex = message.currIndex;
+      
+        // Reduce the value of currIndex by 1.
+        const newCurrIndex = currentCurrIndex + 1;
+      
+        // If the newCurrIndex is less than 0, set it to the total number of languages - 1.
+        const finalCurrIndex = newCurrIndex === message.totalLangs ? 0 : newCurrIndex;
+      
+        // Update the currIndex of the message.
+        const updatedMessage = { ...message, currIndex: finalCurrIndex };
+      
+        // Set the updated message in the messages state.
+        setMessages((messages) => {
+          const newMessages = [...messages];
+          newMessages[index] = updatedMessage;
+          return newMessages;
+        });
+    };
+
+      
     const renderMessages = (messages) => {
         return (
           <ul style={{width: "100%"}}>
-            {messages.map(message => (
+            {messages?.map((message, index) => (
                 <li
                 className={message.author === username ? 'right' : 'left'} 
                 style={{
@@ -109,38 +200,99 @@ const Promptbox = ({name}) => {
                     {message.author === username ? (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600" }}
+                        style={{ padding: "5px 30px", fontWeight: "600"}}
                         sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
                         >
-                        <p>{message.content}</p>
+                            <p>{message.content}</p>
                         </Paper>
                     ) : (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600", position: "relative" }}
+                        style={{ padding: "5px 30px", fontWeight: "600", position: "relative", paddingBottom: "50px"  }}
                         sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
                         >
-                        <p>{message.content}</p>
-                        <button
-                            onClick={({e, message})=>changeLanguage({e, message})}
+                        <p>{message.content[message.langs[message.currIndex]]}</p>
+                        <div
                             style={{
                                 position: "absolute",
-                                top: "15px",
-                                right: "15px"
+                                bottom: "15px",
+                                right: "15px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
                             }}
+                        
                         >
-                            Change Language
-                        </button>
+                            <ArrowLeftOutlinedIcon style={{
+                                fontSize: "40px"
+                            }} 
+                            onClick={(e)=>handleArrowLeftClick(message, index)}
+                            />
+                            <p
+                            >
+                                {message.langs[message.currIndex]}
+                            </p>
+                            <ArrowRightOutlinedIcon style={{
+                                fontSize: "40px"
+                            }} 
+                            onClick={(e)=>handleArrowRightClick(message, index)}
+                            />
+                        </div>
                         </Paper>
                     )}
               </li>
             ))}
+            {
+                tempMessage !== '' &&
+                <>
+                <li
+                    className='left' 
+                    style={{
+                        display: "flex",
+                    marginBottom: "15px",
+                    listStyleType: "none",
+                    justifyContent: "flex-end"
+                    }}
+                    key={1000}>
+                            <Paper
+                            variant="outlined"
+                            style={{ padding: "5px 30px", fontWeight: "600"}}
+                            sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
+                            >
+                            <p>{tempMessage}</p>
+
+                            </Paper>
+                </li>
+                <li
+                className='right' 
+                style={{
+                    display: "flex",
+                    marginBottom: "15px",
+                    listStyleType: "none",
+                    justifyContent: 'flex-start'
+                }}
+                key={1001}
+                >
+                    <Paper
+                        variant="outlined"
+                        style={{ padding: "5px 30px", fontWeight: "600", paddingBottom: "50px"  }}
+                        sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
+                        >
+                        <Wobble size = {45} color = 'black' speed = {0.9}/>
+                        
+                        </Paper>
+                </li>
+                </>
+
+            }
             <div ref={messagesEndRef} />
           </ul>
         );
       };
 
     const [ query, setQuery ] = useState("")
+
+    const navigate = useNavigate();
   
     const handleQuerySubmit = async (event) => {
         event.preventDefault()
@@ -151,8 +303,10 @@ const Promptbox = ({name}) => {
         if (image) {
             const formData = new FormData();
             formData.append('document', image);
+            formData.append('user_id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
             
             try {
+                setTempMessage("DOC")
                 const config = {
                     headers: {
                       'Content-Type': 'multipart/form-data'
@@ -168,19 +322,41 @@ const Promptbox = ({name}) => {
                 // }
                 
                 // console.log(response)
-                console.log(response["data"])
-    
-    
-                addMessageCallback({
-                    "id": response["data"]["qid"],
-                    "author": "creed",
-                    "content": response["data"]["question"],
-                })
+                // console.log(response["data"])
+
+                setTempMessage('')
+
+                const response_data = response["data"]["data"]
+                
+                if (!chat_id) {
+                    navigate(`/c/${response_data['chat_id']}`);
+
+                }
+                
+                // console.log(response_data['prompt'])
+                if (response_data['prompt'].substring(0, 9) === '***DOC***') {
+                    addMessageCallback({
+                        "id": response_data['chat_id']+"u",
+                        "author": "creed",
+                        "content": "DOC",
+                    })
+                }
+                else {
+                    addMessageCallback({
+                        "id": response_data['chat_id']+"u",
+                        "author": "creed",
+                        "content": response_data['prompt'],
+                    })
+                }
                 
                 addMessageCallback({
-                    "id": response["data"]["aid"],
+                    "id": response_data['chat_id']+"m",
                     "author": "llm",
-                    "content": response["data"]["english"] + "\n \n" + response["data"]["hindi"],
+                    "currIndex" : 0,
+                    "totalLangs" : response_data['langs'].length,
+                    'langs' : response_data['langs'],
+                    'timestamp' : response_data['timestamp'],
+                    "content": response_data['ans']
                 })
     
                 setImage(null)
@@ -194,7 +370,7 @@ const Promptbox = ({name}) => {
         }
         else {
 
-            console.log("clcked")
+            // console.log("clcked")
             // const formData = new FormData();
             // formData.append('document', image);
             
@@ -252,7 +428,6 @@ const Promptbox = ({name}) => {
     const hangleMessageInput= (data) => {
       setMessageValue(data)
       setMessageInput(data)
-      // console.log(messageValue, messageInput)
     }
   
     const messageInputField = (
@@ -350,7 +525,9 @@ const Promptbox = ({name}) => {
                             position: "absolute",
                             right: "5px",
                             color: "white",
-                            bottom: "13px"
+                            bottom: "13px",
+                            cursor: "pointer",
+                        
 
                         }} /> 
                     </div>
@@ -371,18 +548,113 @@ const Promptbox = ({name}) => {
           backgroundColor: "#D2B7E5",
           position: "relative"
         }}>
-            
-            <div
-                style={{
-                    padding: "20px",
-                    flex: 1, 
-                    width: "100%",
-                    display: "flex",
-                    overflowY: "auto"
-                }}
-            >
-                {renderMessages(messages)}
-            </div>
+            {
+                (chat_id || tempMessage !== '') &&
+                <div
+                    style={{
+                        padding: "20px",
+                        flex: 1, 
+                        width: "100%",
+                        display: "flex",
+                        overflowY: "auto"
+                    }}
+                >
+                    {renderMessages(messages)}
+                </div>
+            }
+            {
+                (!chat_id && tempMessage === '') &&
+                <>
+                    <div
+                    style= {{
+                        // backgroundColor: "white",
+                        height: "20%",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-evenly"
+                    }}
+                    >
+                        <button
+                        style={{
+                            fontFamily: 'Poppins',
+                            padding: '10px',
+                            /* height: 80%; */
+                            // margin: 5px;
+                            // margin-top: 10px;
+                            width: "30%",
+                            borderRadius: '5px',
+                            backgroundColor: "transparent",
+                            border: "2px solid #303030",
+                            color: "#303030",
+                            fontSize: "medium",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}
+                            // className='new-chat-button'
+                        >
+                            Characteristics Length of Ray ...
+                        </button>
+                        <button
+                        style={{
+                            fontFamily: 'Poppins',
+                            padding: '10px',
+                            /* height: 80%; */
+                            // margin: 5px;
+                            // margin-top: 10px;
+                            width: "30%",
+                            borderRadius: '5px',
+                            backgroundColor: "transparent",
+                            border: "2px solid #303030",
+                            color: "#303030",
+                            fontSize: "medium",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}
+                            // className='new-chat-button'
+                        >
+                            Busbar in Power Plant purpo ...
+                        </button>
+                        <button
+                        style={{
+                            fontFamily: 'Poppins',
+                            padding: '10px',
+                            /* height: 80%; */
+                            // margin: 5px;
+                            // margin-top: 10px;
+                            width: "30%",
+                            borderRadius: '5px',
+                            backgroundColor: "transparent",
+                            border: "2px solid #303030",
+                            color: "#303030",
+                            fontSize: "medium",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}
+                            // className='new-chat-button'
+                        >
+                            Coordinator Geometry % Line ...
+                        </button>
+                    </div>
+                    <div
+                    style= {{
+                        // backgroundColor: "white",
+                        height: "60%",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}
+                    >
+                        <h1
+                        style={{
+                            color: "#303030",
+                            fontSize: "6em"
+                        }}
+                        >SCOTTs GPT</h1>
+                    </div>
+                </>
+            }
             <div style={{
               height: "280px",
               width: "100%",

@@ -13,27 +13,66 @@ export const authRequest= axios.create({
     header: { Authorization: `Bearer ${TOKEN}`}
 })
 
-export const documentUploading = async (data) => {
+export const login = async (dispatch, user) => {
+    dispatch(loginStart())
+
     try{
-        const config = {
-            data : {
-                sheet : sheet,
-                details : details
-            }
-        };
-        
-        const response= await publicRequest.post("api/prompt/test/", config, {
-            headers: headers,
-          })
-        
+        const res= await publicRequest.post("/api/auth/login/", user)
+        console.log(res.data['data'])
+        dispatch(loginSuccess(res.data["data"]))
+    }catch(err) {
+        dispatch(loginFailure())
+    }
+}
+
+export const register = async (user) => {
+    try{
+        user= {
+            username: user['username'],
+            email: user['email'],
+            password: user['password'],
+            first_name: user['first_name'],
+            last_name: user['last_name'],
+        }
+
+        const response= await publicRequest.post("/api/auth/register/", user)
+
+        console.log(response)
         return {
-            status: 200,
-            data: response.data
+            status: 201,
+            message: response.data
         }
     }catch(err) {
+        console.log(err)
         return {
             status: 400,
-            message: err['response']['data']
+            // message: err['response']['data']
         }
     }
 }
+
+
+// export const documentUploading = async (data) => {
+//     try{
+//         const config = {
+//             data : {
+//                 sheet : sheet,
+//                 details : details
+//             }
+//         };
+        
+//         const response= await publicRequest.post("api/prompt/test/", config, {
+//             headers: headers,
+//           })
+        
+//         return {
+//             status: 200,
+//             data: response.data
+//         }
+//     }catch(err) {
+//         return {
+//             status: 400,
+//             message: err['response']['data']
+//         }
+//     }
+// }

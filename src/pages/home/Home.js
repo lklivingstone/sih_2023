@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidepanel from '../../components/sidepanel/Sidepanel';
 import Chats from '../../components/chats/Chats';
 import Navbar from '../../components/navbar/Navbar';
+import Promptbox from '../../components/promptbox/Promptbox';
 // import Chats from '../Components/Chats';
 // import Chatbox from '../Components/Chatbox';
 
@@ -28,36 +29,15 @@ const Home = () => {
     return (
         <div className="Chat">
             {/* <Sidepanel /> */}
-            <Navbar />
             <Chats />
-            {/* <Chats />
             <div className='join'>
-                <div style={{
-                    height: "100vh", 
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column"
-                    }}>
-                    <div
-                        style={{
-                        paddingTop: "70px",
-                        padding: "20px",
-                        flex: 1, 
-                        width: "100%",
-                        background: '#0a192f',
-                        color: "white",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "40px",
-                    }}
-                    >   
-                        <h1>
-                            Hi {username}! This is a chat app..
-                        </h1>
-                        <h4>Try clicking on the + button on the left</h4>
-                    </div>
-                </div>
-            </div> */}
+                <Promptbox  name={"LK"}/>
+                {/* <div className='enter'>
+                    What chat room would you like to enter? <br/>
+                    <input onChange={(event)=>setRoomName(event.target.value)}/><br/>
+                    <input  type="button" placeholder='Enter' value="Enter" onClick={redirectRoom}/>
+                </div> */}
+            </div>
         </div>
     )
 }

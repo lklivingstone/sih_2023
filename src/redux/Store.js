@@ -18,7 +18,7 @@ import {
     storage,
   }
   
-  const rootReducer= combineReducers({user_details: userReducer})
+  const rootReducer= combineReducers({user: userReducer})
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

@@ -88,8 +88,8 @@
     list-style-type: none;
 }
 
-.each-chat-li:hover {
-    background-color: #0e1b2f;
+.each-chat-button:hover {
+    background-color: #e4d7ee;
     cursor: pointer;
 }
 

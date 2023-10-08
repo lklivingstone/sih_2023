@@ -16,6 +16,8 @@ const Chats = () => {
     // const user= useSelector((state)=>state.user)
     // const username= user.user.username
     const username= "creed"
+    const navigate = useNavigate();
+
     // const token= user.token
     // 123, 123, 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 
     const [chats, setChats]= useState([
@@ -112,6 +114,11 @@ const Chats = () => {
         );
     };
 
+    const redirectToLogout = () => {
+        navigate("/logout");
+    };
+
+
     return (
         <div className="chats">
             <div style={{
@@ -195,16 +202,26 @@ const Chats = () => {
                     alignItems: "center",
                     justifyContent: "space-around"
                 }}>
-                    <div style={{
-                        height: "30px",
-                        width: "30px",
-                        backgroundColor: "white",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}>
-                        <h2>J</h2>
-                    </div>
+                    {/* <div > */}
+                        <button
+                        onClick={redirectToLogout}
+                        style={{
+                            font: "Poppins",
+                            height: "30px",
+                            width: "30px",
+                            backgroundColor: "white",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            border: "none",
+                            fontSize: "20px",
+                            cursor: "pointer"
+                        }}
+                        >
+                            J
+                        </button>
+                        {/* <h2>J</h2> */}
+                    {/* </div> */}
                     <FirstPageIcon style={{
                         color: "rgb(253, 208, 255)",
                         fontSize: "35px"
