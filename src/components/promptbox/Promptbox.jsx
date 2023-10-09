@@ -21,6 +21,9 @@ import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import { Wobble } from '@uiball/loaders'
 
+import { NewtonsCradle } from '@uiball/loaders'
+
+
 
 const { reverse } = Array;
 
@@ -73,7 +76,7 @@ const Promptbox = ({name}) => {
             try {
                 if (chat_id) {
     
-                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-chat-id/?chat_id=${chat_id}`);
+                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-chat-id/?chat-id=${chat_id}`);
                     console.log(response.data)
                     const responseData = response.data
                     responseData.forEach((item) => {
@@ -93,10 +96,16 @@ const Promptbox = ({name}) => {
                         item['langs'] = matches
         
                         if (item['prompt'].substring(0, 9) === '***DOC***') {
+                            item['prompt'] = item['prompt'].slice(9)
+                            const parts = item['prompt'].split("*#*#*#");
+
+                            // Take the first element of the array
+                            const pathName = parts[0];
+                            console.log(pathName)
                             addMessageCallback({
                                 "id": item['chat_id']+"u",
                                 "author": "creed",
-                                "content": "DOC",
+                                "content": pathName,
                             })
                         }
                         else {
@@ -192,18 +201,28 @@ const Promptbox = ({name}) => {
                 className={message.author === username ? 'right' : 'left'} 
                 style={{
                     display: "flex",
-                marginBottom: "15px",
-                listStyleType: "none",
-                justifyContent: message.author === username ? "flex-end" : 'flex-start'
+                    marginBottom: "15px",
+                    listStyleType: "none",
+                    justifyContent: message.author === username ? "flex-end" : 'flex-start'
                 }}
                 key={message.id}>
                     {message.author === username ? (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600"}}
+                        style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
                         sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
                         >
-                            <p>{message.content}</p>
+                            {
+                                message.content.slice(-4) === '.pdf' ?
+                                (
+                                    <>
+                                        <InsertDriveFileOutlinedIcon />
+                                        <p>{message.content}</p>
+                                    </>
+                                ) : (
+                                    <p>{message.content}</p>
+                                )
+                            }
                         </Paper>
                     ) : (
                         <Paper
@@ -256,11 +275,20 @@ const Promptbox = ({name}) => {
                     key={1000}>
                             <Paper
                             variant="outlined"
-                            style={{ padding: "5px 30px", fontWeight: "600"}}
+                            style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
                             sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
                             >
-                            <p>{tempMessage}</p>
-
+                                {
+                                    tempMessage.slice(-4) === '.pdf' ?
+                                    (
+                                        <>
+                                            <InsertDriveFileOutlinedIcon />
+                                            <p>{tempMessage}</p>
+                                        </>
+                                    ) : (
+                                        <p>{tempMessage}</p>
+                                    )
+                                }
                             </Paper>
                 </li>
                 <li
@@ -278,7 +306,12 @@ const Promptbox = ({name}) => {
                         style={{ padding: "5px 30px", fontWeight: "600", paddingBottom: "50px"  }}
                         sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
                         >
-                        <Wobble size = {45} color = 'black' speed = {0.9}/>
+                        {/* <Wobble size = {45} color = 'black' speed = {0.9}/> */}
+                        <NewtonsCradle 
+                        size={45}
+                        speed={1.4} 
+                        color="black" 
+                        />
                         
                         </Paper>
                 </li>
@@ -303,16 +336,17 @@ const Promptbox = ({name}) => {
         if (image) {
             const formData = new FormData();
             formData.append('document', image);
-            formData.append('user_id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
-            if (chat_id) {
-                formData.append('chat_id', chat_id);
-            }
-            else {
-                formData.append('chat_id', -1);
-            }
+            formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            // if (chat_id) {
+            //     formData.append('chat_id', chat_id);
+            // }
+            // else {
+            //     console.log(-1)
+            // formData.append('chat_id', -1);
+            // }
             
             try {
-                setTempMessage("DOC")
+                setTempMessage(image['name'])
                 const config = {
                     headers: {
                       'Content-Type': 'multipart/form-data'
@@ -333,18 +367,22 @@ const Promptbox = ({name}) => {
                 setTempMessage('')
 
                 const response_data = response["data"]["data"]
+                setImage(null)
                 
-                if (!chat_id) {
+                // if (!chat_id) {
                     navigate(`/c/${response_data['chat_id']}`);
 
-                }
+                // }
                 
                 // console.log(response_data['prompt'])
+                // console.log(image)
                 if (response_data['prompt'].substring(0, 9) === '***DOC***') {
+                    const parts = response_data['prompt'].split("*#*#*#");
+
                     addMessageCallback({
                         "id": response_data['chat_id']+"u",
                         "author": "creed",
-                        "content": "DOC",
+                        "content": parts[0],
                     })
                 }
                 else {
@@ -365,7 +403,6 @@ const Promptbox = ({name}) => {
                     "content": response_data['ans']
                 })
     
-                setImage(null)
     
                 // console.log("Clicked")
             } catch (error) {
@@ -379,12 +416,13 @@ const Promptbox = ({name}) => {
             // console.log("clcked")
             const formData = new FormData();
             formData.append('prompt', image);
-            formData.append('user_id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            // formData.append('chat-id', chat_id);
             if (chat_id) {
-                formData.append('chat_id', chat_id);
+                formData.append('chat-id', chat_id);
             }
             else {
-                formData.append('chat_id', -1);
+                formData.append('chat-id', -1);
             }
             
             try {
@@ -397,8 +435,8 @@ const Promptbox = ({name}) => {
                 
                 const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', {
                     "prompt" : query,
-                    'user_id' : 'e219ade0-1cc0-4b07-804d-f6f10a25dc23',
-                    'chat_id' : chat_id
+                    'user-id' : 'e219ade0-1cc0-4b07-804d-f6f10a25dc23',
+                    'chat-id' : chat_id
                 });
                 
                 setTempMessage('')
@@ -415,14 +453,14 @@ const Promptbox = ({name}) => {
                     addMessageCallback({
                         "id": response_data['chat_id']+"u",
                         "author": "creed",
-                        "content": "DOC",
+                        "content": query,
                     })
                 }
                 else {
                     addMessageCallback({
                         "id": response_data['chat_id']+"u",
                         "author": "creed",
-                        "content": response_data['prompt'],
+                        "content": query,
                     })
                 }
                 
@@ -491,12 +529,18 @@ const Promptbox = ({name}) => {
 
     const [image, setImage] = useState(null);
     const handleFileInputChange = (event) => {
-        console.log("file")
+        // console.log("file")
         const file = event.target.files[0];
         // Handle the selected file here
         setImage(file)
+
     };
-    console.log(image)
+
+    useEffect(()=>{
+        if (image) {
+            console.log(image['name'])
+        }
+    }, [image])
 
     const handleButtonClick = () => {
         fileInputRef.current.click();
@@ -552,6 +596,7 @@ const Promptbox = ({name}) => {
                             onBlur={handleBlur}
                             className={textareaClass}
                             placeholder="Type your query..."
+                            value={query}
                         />
                         <SendRoundedIcon 
                             onClick={(e)=>handleQuerySubmit(e)}
@@ -587,6 +632,7 @@ const Promptbox = ({name}) => {
                 (chat_id || tempMessage !== '') &&
                 <div
                     style={{
+                        // backgroundColor: "white",   
                         padding: "20px",
                         flex: 1, 
                         width: "100%",
@@ -690,6 +736,11 @@ const Promptbox = ({name}) => {
                     </div>
                 </>
             }
+            <div style={{
+              height: "80px",
+              width: "100%",
+            }}>
+            </div>
             <div style={{
               height: "280px",
               width: "100%",

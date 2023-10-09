@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 // import { fetchChats } from "../Redux/apiCalls";
@@ -13,7 +13,8 @@ import './Chats.css'
 import "../customScrollbar/CustomScrollbar.css";
 
 const Chats = () => {
-    // const user= useSelector((state)=>state.user)
+    const user_id= useSelector((state)=>state.user.user_id)
+    console.log(user_id)
     // const username= user.user.username
     const username= "creed"
     const navigate = useNavigate();
@@ -21,30 +22,6 @@ const Chats = () => {
     // const token= user.token
     // 123, 123, 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 
     const [chats, setChats]= useState([
-        {
-            'id': 1,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 2,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 3,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 1,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 2,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 3,
-            'desc': "Lorem Ipsum"
-        }
     ])
     // const dispatch= useDispatch()
     // const navigate= useNavigate()
@@ -71,6 +48,35 @@ const Chats = () => {
     
     //     fetchData();
     // }, []);
+
+    const addChatsCallback = (chat) => {
+        setChats((prevChat) => [ chat, ...prevChat ]);
+    };
+
+    useEffect(() => {
+
+        const getChatsFunction = async () => {
+
+            try {
+                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-user-id/?user-id=${user_id}`);
+                    console.log(response.data)
+                    const responseData = response.data
+                    responseData.forEach((item) => {
+
+                        console.log(item)
+                        addChatsCallback({
+                            "id": item['chat_id'],
+                            "name": item['name'],
+                        })
+                    })
+                
+            }
+            catch (err) {
+    
+            }
+        }
+        getChatsFunction()
+    }, []);
     
 
     const renderChats = (chats) => {
@@ -105,7 +111,7 @@ const Chats = () => {
                                     </p>
                                 </div> */}
                                 <button className='each-chat-button'>
-                                    test
+                                    {chat.name}
                                 </button>
                         </li>
                     // </Link>
@@ -132,7 +138,7 @@ const Chats = () => {
                 </button>
             </div>
             <div className='each-chat-div' style={{
-                flex: 4,
+                flex: 10,
                 
                 overflowX: "hidden",
             }}>
@@ -141,12 +147,12 @@ const Chats = () => {
                         margin: "5%",
                         color: "#D2B7E5"
                     }}
-                >My Chats</h3>
+                >Summarization:</h3>
             {
                 renderChats(chats)
             }
             </div>
-            <div 
+            {/* <div 
             className='custom-scrollbar'
             style={{
                 flex: 4,
@@ -162,7 +168,7 @@ const Chats = () => {
             {
                 renderChats(chats)
             }
-            </div>
+            </div> */}
             <div style={{
                 flex: 3,
                 display: "flex"
