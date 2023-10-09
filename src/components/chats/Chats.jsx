@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { redirect, useNavigate } from 'react-router-dom';
+import { redirect, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import axios from 'axios';
@@ -18,6 +18,9 @@ const Chats = () => {
     // const username= user.user.username
     const username= "creed"
     const navigate = useNavigate();
+
+    const location= useLocation();
+    const chat_id= location.pathname.split("/")[2];
 
     // const token= user.token
     // 123, 123, 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 
@@ -53,6 +56,15 @@ const Chats = () => {
         setChats((prevChat) => [ chat, ...prevChat ]);
     };
 
+    const handleRedirectClick = (link) => {
+        navigate(`/c/${link}`)
+    }
+
+    
+    const handleHomeRedirectClick = (link) => {
+        navigate(`/`)
+    }
+
     useEffect(() => {
 
         const getChatsFunction = async () => {
@@ -83,13 +95,6 @@ const Chats = () => {
         return (
             <ul>
                 {chats.length>0 && chats?.map(chat => (
-                    // <Link to={`/chat/${chat.id}`}
-                    // onClick={handleClick(chat.id)}
-                    //         style={{
-                    //         textDecoration: 'none',
-                    //         color: 'black'
-                    //     }}
-                    // >
                         <li
                             className='each-chat-li'
                             style={{display: "flex",
@@ -100,21 +105,15 @@ const Chats = () => {
                             listStyleType: "none"}}
                             key={chat.id}
                             >
-                                {/* <div
-                                onClick={(e)=>handleClick(chat)}
-                                className='each-chat-div'>
-                                    <p
-                                        style={{paddingLeft: "10px",
-                                        color: "white"}}
-                                    >
-                                        {chat.desc}
-                                    </p>
-                                </div> */}
-                                <button className='each-chat-button'>
+                                <button 
+                                style={{
+                                    backgroundColor: chat.id === chat_id ? '#e4d7ee' : '#D2B7E5',
+                                }}
+                                onClick={() => handleRedirectClick(chat.id)}
+                                className='each-chat-button'>
                                     {chat.name}
                                 </button>
                         </li>
-                    // </Link>
                 ))}
             </ul>
         );
@@ -133,7 +132,12 @@ const Chats = () => {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                <button className='new-chat-button'>
+                <button 
+                style={{    
+                    cursor: "pointer"
+                }}
+                onClick={() => handleHomeRedirectClick()}
+                className='new-chat-button'>
                     New Chat <AddIcon />
                 </button>
             </div>

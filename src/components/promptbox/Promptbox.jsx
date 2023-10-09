@@ -210,7 +210,7 @@ const Promptbox = ({name}) => {
                         <Paper
                         variant="outlined"
                         style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
-                        sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
+                        sx={{ backgroundColor: "transparent", color: "#303030", border: "none" }}
                         >
                             {
                                 message.content.slice(-4) === '.pdf' ?
@@ -227,7 +227,7 @@ const Promptbox = ({name}) => {
                     ) : (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600", position: "relative", paddingBottom: "50px"  }}
+                        style={{ width: "100%", padding: "5px 30px", fontWeight: "600", position: "relative", paddingBottom: "50px"  }}
                         sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
                         >
                         <p>{message.content[message.langs[message.currIndex]]}</p>
@@ -276,7 +276,7 @@ const Promptbox = ({name}) => {
                             <Paper
                             variant="outlined"
                             style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
-                            sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
+                            sx={{ backgroundColor: "transparent", color: "#303030", border: "none"  }}
                             >
                                 {
                                     tempMessage.slice(-4) === '.pdf' ?
@@ -369,10 +369,11 @@ const Promptbox = ({name}) => {
                 const response_data = response["data"]["data"]
                 setImage(null)
                 
-                // if (!chat_id) {
+                if (response_data['chat_id']) {
+                    console.log(response_data['chat_id'])
+                    window.location.reload();
                     navigate(`/c/${response_data['chat_id']}`);
-
-                // }
+                }
                 
                 // console.log(response_data['prompt'])
                 // console.log(image)
@@ -412,18 +413,18 @@ const Promptbox = ({name}) => {
             }
         }
         else {
-
+            console.log("###############")
             // console.log("clcked")
-            const formData = new FormData();
-            formData.append('prompt', image);
-            formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
-            // formData.append('chat-id', chat_id);
-            if (chat_id) {
-                formData.append('chat-id', chat_id);
-            }
-            else {
-                formData.append('chat-id', -1);
-            }
+            // const formData = new FormData();
+            // formData.append('prompt', image);
+            // formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            // // formData.append('chat-id', chat_id);
+            // if (chat_id) {
+            //     formData.append('chat-id', chat_id);
+            // }
+            // else {
+            //     formData.append('chat-id', -1);
+            // }
             
             try {
                 setTempMessage(query)
