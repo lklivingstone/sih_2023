@@ -54,7 +54,7 @@ const Logout = () => {
                             color: "#edf5e1",
                             border: "none",
                             cursor: "pointer",
-                            fontFamily: 'Reem Kufi Fun',
+                            fontFamily: 'Poppins',
                             backgroundColor: "rgb(48, 48, 48)",
                             "&:disabled" : {
                                 color: "#e1e6f5",
