@@ -66,21 +66,51 @@ def upload_document(request):
         prompt = "### Instruction: " + header + "\n" + \
                  "### Input: " +  extracted_text + "\nPlease provide a detailed2 -paragraph summary of the above text." + \
                  "\n### Response:\n"
-        result = request_response(prompt)
+        
+        ### Instru kdwadwa
+        ### Input: How are you?
+        ### Reponse: Fine
+        ### Input
+        
+        ##################### CORRECT ###############################
 
-        user_id = request.data.get('user_id')
-        chat_id = request.data.get('chat_id')
+        # result = request_response(prompt)
 
-        if chat_id == -1:
-            chat = Chat(user_id=user_id, name=result['english'][:20])  # Provide a name for the chat
-            chat.save()
-            new_chat_id = chat.chat_id
+        ##################### END CORRECT ############################
 
-        else:
-            new_chat_id = chat_id
 
-        prompt = Prompt(chat_id=new_chat_id, prompt='***DOC***'+prompt, ans={"English": result['english'], "Hindi": result['hindi']}, langs=["English", "Hindi"])
+        ##################### TEST ###############################
+
+        result = {
+            "english": "This is English Text",
+            "hindi": "This is Hindi Text",
+        }
+
+        time.sleep(4) 
+
+        ##################### END TEST ############################
+
+
+        user_id = request.data.get('user-id')
+        # chat_id = request.data.get('chat_id')
+        # print(type(chat_id))
+        # chat = None
+        # if chat_id == '-1':
+        #     chat = Chat(user_id=user_id, name=result['english'][:20])  # Provide a name for the chat
+        #     chat.save()
+        #     new_chat_id = chat.chat_id
+
+        # else:
+        #     new_chat_id = chat_id
+
+        chat = Chat(user_id=user_id, name=result['english'][:20])  # Provide a name for the chat
+        chat.save()
+        new_chat_id = chat.chat_id
+
+        prompt = Prompt(chat_id=new_chat_id, prompt='***DOC***'+uploaded_file.name+'*#*#*#'+prompt, ans={"English": result['english'], "Hindi": result['hindi']}, langs=["English", "Hindi"])
         prompt.save()
+        
+
         
         return Response({
             'meta' : {
@@ -128,52 +158,56 @@ def summarize(request):
              "### Input: " +  json_data['prompt'] + "\nPlease provide a detailed 2-paragraph summary of the above text." + \
              "\n### Response: "
 
-    result = request_response(prompt)
+    ##################### CORRECT ###############################
+
+    # result = request_response(prompt)
+
+    ##################### END CORRECT ############################
+        
+    ##################### TEST ###############################
+
+    result = {
+        "english": "This is English Text",
+        "hindi": "This is Hindi Text",
+    }
+    print(json_data)
+    time.sleep(4) 
+
+    ##################### END TEST ############################
 
     prompt_chat = json_data['prompt']
 
-    user_id = json_data['user_id'] 
-    chat_id = json_data['chat_id'] 
+    user_id = json_data['user-id'] 
+    # chat_id = json_data['chat-id'] 
 
-    if chat_id == -1:
-        chat = Chat(user_id=user_id, name=result['english'][:20])  # Provide a name for the chat
-        chat.save()
-        new_chat_id = chat.chat_id
+    # if chat_id == '-1':
+    #     chat = Chat(user_id=user_id, name=result['english'][:20])  # Provide a name for the chat
+    #     chat.save()
+    #     new_chat_id = chat.chat_id
 
-    else:
-        new_chat_id = chat_id
+    # else:
+    #     new_chat_id = chat_id
 
-    prompt = Prompt(chat_id=new_chat_id, prompt=prompt_chat, ans={"English": result['english'], "Hindi": result['hindi']}, langs=["English", "Hindi"])
-    prompt.save()
+    # prompt = Prompt(chat_id=new_chat_id, prompt=prompt_chat, ans={"English": result['english'], "Hindi": result['hindi']}, langs=["English", "Hindi"])
+    # prompt.save()
 
-    if result == -1:
-            return JsonResponse({"message": 'Error'})
-    else:
-         return Response({
-            'meta' : {
-                'status_code' : 200,
-                'message' : 'success'
-            },
-            'data' : {
-                'prompt_id' : prompt.prompt_id,
-                'chat_id' : prompt.chat_id,
-                'prompt' : prompt.prompt,
-                'ans' : prompt.ans,
-                'langs' : prompt.langs,
-                'timestamp' : prompt.created_at
-            }
-        }, status=status.HTTP_200_OK)
-
-        # return JsonResponse({
-        #     "qid": uuid.uuid1(),
-        #     "aid": uuid.uuid1(),
-        #     "question": json_data['prompt'],
-        #     "message": 'Generation Successful',
-        #     "english": result['english'],
-        #     "hindi": result['hindi']
-        #     }, 
-        #     status=200
-        #     )
+    # if result == -1:
+    #         return JsonResponse({"message": 'Error'})
+    # else:
+    #      return Response({
+    #         'meta' : {
+    #             'status_code' : 200,
+    #             'message' : 'success'
+    #         },
+    #         'data' : {
+    #             'prompt_id' : prompt.prompt_id,
+    #             'chat_id' : prompt.chat_id,
+    #             'prompt' : prompt.prompt,
+    #             'ans' : prompt.ans,
+    #             'langs' : prompt.langs,
+    #             'timestamp' : prompt.created_at
+    #         }
+    #     }, status=status.HTTP_200_OK)
     
 
 @sync_to_async
