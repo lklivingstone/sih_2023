@@ -304,6 +304,12 @@ const Promptbox = ({name}) => {
             const formData = new FormData();
             formData.append('document', image);
             formData.append('user_id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            if (chat_id) {
+                formData.append('chat_id', chat_id);
+            }
+            else {
+                formData.append('chat_id', -1);
+            }
             
             try {
                 setTempMessage("DOC")
@@ -371,39 +377,67 @@ const Promptbox = ({name}) => {
         else {
 
             // console.log("clcked")
-            // const formData = new FormData();
-            // formData.append('document', image);
+            const formData = new FormData();
+            formData.append('prompt', image);
+            formData.append('user_id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            if (chat_id) {
+                formData.append('chat_id', chat_id);
+            }
+            else {
+                formData.append('chat_id', -1);
+            }
             
             try {
+                setTempMessage(query)
                 const config = {
-                    prompt: query
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
                 };
                 
-                const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', config);
+                const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', {
+                    "prompt" : query,
+                    'user_id' : 'e219ade0-1cc0-4b07-804d-f6f10a25dc23',
+                    'chat_id' : chat_id
+                });
                 
-                // {
-                //     "id": 1,
-                //     "author": "creed",
-                //     "content": "This is the first text"
-                // }
-                
-                // console.log(response)
+                setTempMessage('')
 
-                console.log(response["data"])
-    
-                addMessageCallback({
-                    "id": response["data"]["qid"],
-                    "author": "creed",
-                    "content": response["data"]["question"],
-                })
+                const response_data = response["data"]["data"]
+                
+                if (!chat_id) {
+                    navigate(`/c/${response_data['chat_id']}`);
+
+                }
+                
+                // console.log(response_data['prompt'])
+                if (response_data['prompt'].substring(0, 9) === '***DOC***') {
+                    addMessageCallback({
+                        "id": response_data['chat_id']+"u",
+                        "author": "creed",
+                        "content": "DOC",
+                    })
+                }
+                else {
+                    addMessageCallback({
+                        "id": response_data['chat_id']+"u",
+                        "author": "creed",
+                        "content": response_data['prompt'],
+                    })
+                }
                 
                 addMessageCallback({
-                    "id": response["data"]["aid"],
+                    "id": response_data['chat_id']+"m",
                     "author": "llm",
-                    "content": response["data"]["english"] + "\n \n" + response["data"]["hindi"],
+                    "currIndex" : 0,
+                    "totalLangs" : response_data['langs'].length,
+                    'langs' : response_data['langs'],
+                    'timestamp' : response_data['timestamp'],
+                    "content": response_data['ans']
                 })
     
                 setImage(null)
+                setQuery("")
     
                 // console.log("Clicked")
             } catch (error) {
@@ -428,6 +462,7 @@ const Promptbox = ({name}) => {
     const hangleMessageInput= (data) => {
       setMessageValue(data)
       setMessageInput(data)
+    //   console.log(messageInput)
     }
   
     const messageInputField = (
