@@ -31,8 +31,15 @@ const Promptbox = ({name}) => {
     // const ID = useSelector((state)=>state.user.chatID)
     const ID = 1;
     const location= useLocation();
-    const chat_id= location.pathname.split("/")[2];
+    const [chat_id, setChatID] = useState(location.pathname.split("/")[2])
+    // let chat_id= location.pathname.split("/")[2];
     console.log(chat_id)
+    useEffect(() => {
+        setChatID(location.pathname.split("/")[2])
+        setMessages([])
+        console.log("CHANGED")
+        // chat_id= location.pathname.split("/")[2];
+    }, [location])
     // const recipient = useSelector((state)=>state.user.recipient)
     const [messageInput, setMessageInput] = useState('');
     const [messageValue, setMessageValue]= useState('');
@@ -41,23 +48,7 @@ const Promptbox = ({name}) => {
     // const username = useSelector((state) => state.user.user.username);
     const username = "creed";
     const [messages, setMessages] = useState([
-        // {
-        //     "id": 1,
-        //     "author": "creed",
-        //     "content": "This is the first text"
 
-        // },
-        // {
-        //     "id": 2,
-        //     "author": "llm",
-        //     "currIndex" : 0,
-        //     "totalLangs" : 2,
-        //     'langs' : ['English', 'Hindi'],
-        //     "content": {
-        //         'English' : "This is second text",
-        //         'Hindi' : "Hindi This is second text"
-        //     }
-        // },
 
     ]);
     const messagesEndRef = useRef(null)
@@ -133,7 +124,7 @@ const Promptbox = ({name}) => {
             }
         }
         getChatsFunction()
-    }, []);
+    }, [chat_id]);
 
     useEffect(() => {
         scrollToBottom()
@@ -337,13 +328,6 @@ const Promptbox = ({name}) => {
             const formData = new FormData();
             formData.append('document', image);
             formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
-            // if (chat_id) {
-            //     formData.append('chat_id', chat_id);
-            // }
-            // else {
-            //     console.log(-1)
-            // formData.append('chat_id', -1);
-            // }
             
             try {
                 setTempMessage(image['name'])
@@ -371,8 +355,8 @@ const Promptbox = ({name}) => {
                 
                 if (response_data['chat_id']) {
                     console.log(response_data['chat_id'])
-                    window.location.reload();
                     navigate(`/c/${response_data['chat_id']}`);
+                    window.location.reload();
                 }
                 
                 // console.log(response_data['prompt'])
@@ -413,18 +397,6 @@ const Promptbox = ({name}) => {
             }
         }
         else {
-            console.log("###############")
-            // console.log("clcked")
-            // const formData = new FormData();
-            // formData.append('prompt', image);
-            // formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
-            // // formData.append('chat-id', chat_id);
-            // if (chat_id) {
-            //     formData.append('chat-id', chat_id);
-            // }
-            // else {
-            //     formData.append('chat-id', -1);
-            // }
             
             try {
                 setTempMessage(query)
@@ -559,59 +531,63 @@ const Promptbox = ({name}) => {
 
     const textareaClass = isFocused ? 'focused-textarea' : 'normal-textarea';
 
+    const handleEnterKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          // Pressed Enter without Shift key
+          handleQuerySubmit(e);
+        }
+      };
+    
 
     // console.log(query)
 
     const messagingField= (
       <>
         <input
-                type="file"
-                style={{ display: 'none' }}
-                // style={{ width: "150px"}}
-                ref={fileInputRef}
-                onChange={(e)=>handleFileInputChange(e)}
-                />
-                    <button 
-                    className="upload-icon" 
-                    onClick={handleButtonClick}>
-                        Upload PDF
-                        {
-                        !image ? <FileUploadOutlinedIcon fontSize="large"  /> : 
-                        <CloudDoneOutlinedIcon fontSize="large" /> 
-                        }
-                    </button>
-                    <div style={{
-                        width: "80%",
-                        padding: 0,
-                        margin: "20px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "5px",
-                        backgroundColor: "#303030",
-                        position: "relative"
-                    }}>
-                        <textarea
-                            onChange={(e)=>setQuery(e.target.value)}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            className={textareaClass}
-                            placeholder="Type your query..."
-                            value={query}
-                        />
-                        <SendRoundedIcon 
-                            onClick={(e)=>handleQuerySubmit(e)}
-                            style={{
-                                zIndex: 10000,
-                            position: "absolute",
-                            right: "5px",
-                            color: "white",
-                            bottom: "13px",
-                            cursor: "pointer",
-                        
-
-                        }} /> 
-                    </div>
+            type="file"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={(e) => handleFileInputChange(e)}
+        />
+        <button
+            className="upload-icon"
+            onClick={handleButtonClick}
+        >
+            Upload PDF
+            {!image ? <FileUploadOutlinedIcon fontSize="large" /> : <CloudDoneOutlinedIcon fontSize="large" />}
+        </button>
+        <div style={{
+            width: "80%",
+            padding: 0,
+            margin: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "5px",
+            backgroundColor: "#303030",
+            position: "relative"
+        }}>
+            <textarea
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleEnterKeyPress}  // Handle Enter key press
+            className={textareaClass}
+            placeholder="Type your query..."
+            value={query}
+            />
+            <SendRoundedIcon
+            onClick={(e) => handleQuerySubmit(e)}
+            style={{
+                zIndex: 10000,
+                position: "absolute",
+                right: "5px",
+                color: "white",
+                bottom: "13px",
+                cursor: "pointer",
+            }}
+            />
+        </div>
       </>
 
   )
