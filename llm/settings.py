@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users',
     'prompt',
+    'chats',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',

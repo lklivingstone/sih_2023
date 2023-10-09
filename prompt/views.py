@@ -7,6 +7,7 @@ from django.http import JsonResponse
 import json
 import os
 import uuid
+from rest_framework import status
 
 from .utils import (
     get_summarize_header,
@@ -18,9 +19,18 @@ from .translate import(
     init_translator
 )
 
+from chats.models import (
+    Chat,
+    Prompt
+)
 
 init_translator()
 
+########################
+
+import time
+
+########################
 
 @sync_to_async
 @api_view(['POST'])
@@ -56,7 +66,32 @@ def upload_document(request):
         prompt = "### Instruction: " + header + "\n" + \
                  "### Input: " +  extracted_text + "\nPlease provide a detailed2 -paragraph summary of the above text." + \
                  "\n### Response:\n"
-        
+
+        user_id = request.data.get('user_id')
+        print(user_id)
+        chat = Chat(user_id=user_id, name="Chat Name")  # Provide a name for the chat
+        chat.save()
+
+        prompt = Prompt(chat_id=chat.chat_id, prompt='***DOC***'+prompt, ans={"English": "English Text", "Hindi": "Hindi Text"}, langs=["English", "Hindi"])
+        prompt.save()
+
+        time.sleep(3)
+        return Response({
+            'meta' : {
+                'status_code' : 200,
+                'message' : 'success'
+            },
+            'data' : {
+                'prompt_id' : prompt.prompt_id,
+                'chat_id' : prompt.chat_id,
+                'prompt' : prompt.prompt,
+                'ans' : prompt.ans,
+                'langs' : prompt.langs,
+                'timestamp' : prompt.created_at
+            }
+        }, status=status.HTTP_200_OK)
+
+        ############### CORRECT CODE ######################
         result = request_response(prompt)
         
         if result == -1:
@@ -74,6 +109,7 @@ def upload_document(request):
                 )
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
+        ############### -------- CORRECT CODE END ######################
 
 
 @sync_to_async
