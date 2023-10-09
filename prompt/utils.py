@@ -4,7 +4,7 @@ import os
 
 from .translate import get_translation
 
-MODEL = "NousResearch/Nous-Hermes-llama-2-7b"
+MODEL = "TheBloke/Nous-Hermes-Llama2-AWQ"
 TOKENS = 1200
 TEMP = 0.9
 ENDPOINT_URL = "http://localhost:8000/v1/completions"
