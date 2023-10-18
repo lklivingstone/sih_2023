@@ -101,6 +101,109 @@ li a:hover {
     flex: 1;
 }
 
+.content   {
+    /* border: 2px solid; */
+    justify-content: center;
+    border-radius: 80px;
+    padding: 40px;
+}
+
+.content-intro  {
+    margin-bottom: 10px;
+    margin-left: 30px;
+    padding: 20px;
+    align-items: center;
+    justify-content: space-around;
+    /* display: flex;
+    border: 2px solid;
+    border-radius: 80px; */
+
+
+}
+
+.content-card-container {
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.content-card {
+    padding: 20px;
+    height: auto;
+    border: 1px solid white;
+    background-color: papayawhip;
+    width: 25%;
+    border-radius: 20px;
+}
+
+.content-card-vm {
+    margin: 0;
+    height: 50vh;
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between ;
+}
+
+.content-card:hover {
+    box-shadow: 3px 3px 20px lightsteelblue;
+}
+
+.content-card-vision:hover {
+    box-shadow: 3px 3px 20px lightsteelblue;
+}
+.content-card-vision  {
+    margin: 0;
+    padding: 20px;
+    height: auto;
+    border: 1px solid white;
+    background-color: papayawhip;
+    color: #1b1f27;
+    width: 100%;
+    border-radius: 20px;
+}
+
+.content-vision  {
+    display: flex;
+    border: 2px solid;
+    border-radius: 40px;
+}
+
+.content-features  {
+    display: flex;
+    border: 2px solid;
+    border-radius: 40px;
+}
+
+.content-outcomes  {
+    display: flex;
+    border: 2px solid;
+    border-radius: 80px;
+}
+
+.content-mission  {
+    padding: 20px;
+    margin-left: 30px;
+    display: center;
+    border: 2px;
+    border-radius: 40px;
+}
+
+.content-mission h1   {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+
+}
+.content-us  {
+    padding: 20px;
+    margin-left: 30px;
+    display: center;
+    border: 2px;
+    border-radius: 40px;
+}
+
 .main h1 {
     font-size: 4rem;
     font-weight: 600;
@@ -160,8 +263,9 @@ li a:hover {
 
 .images {
     width: 60%;
-    margin-left: auto; 
+    margin-left: auto;
     margin-right: auto;
+    border-radius: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -201,6 +305,15 @@ li a:hover {
         box-shadow: 10px 10px 19px #1c1e22, -10px -10px 19px #1b1f27;
     }
 }
+ .dark-mode .content-card  {
+    color: black;
+    background-color:rgb(216, 204, 218);
+ }
+
+ .dark-mode .content-card-vision  {
+    color: black;
+    background-color:rgb(216, 204, 218);
+ }
 
 .dark-mode header {
     box-shadow: 0 4px 17px rgb(80 80 80 / 31%);
@@ -266,9 +379,12 @@ li a:hover {
     .images {
         width: 100%;
         margin: auto;
+        border-radius: 25px;
     }
 
     .main {
         margin-top: 2rem;
     }
 }
+
+
