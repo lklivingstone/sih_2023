@@ -4,7 +4,7 @@ import os
 
 from .translate import get_translation
 
-MODEL = "NousResearch/Nous-Hermes-llama-2-7b"
+MODEL = "TheBloke/Llama-2-7b-chat-fp16"
 TOKENS = 1200
 TEMP = 0.9
 ENDPOINT_URL = "http://localhost:8000/v1/completions"
@@ -22,12 +22,14 @@ HEADERS = {
     }
 
 
-def request_response(message):
+def request_response(message, is_document):
 
     hindi = []
     english = []
     
     DATA['prompt'] = message
+
+    print(message)
     response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
 
     if response.status_code == 200:

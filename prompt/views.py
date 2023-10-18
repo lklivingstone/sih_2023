@@ -67,16 +67,29 @@ def upload_document(request):
                  "### Input: " +  extracted_text + "\nPlease provide a detailed2 -paragraph summary of the above text." + \
                  "\n### Response:\n"
 
-        user_id = request.data.get('user_id')
-        print(user_id)
-        chat = Chat(user_id=user_id, name="Chat Name")  # Provide a name for the chat
+        result = request_response(prompt, True)
+
+        if result == -1:
+            return JsonResponse({
+                'meta' : {
+                    'status_code' : 500,
+                    'message' : 'failure'
+                },
+                'data' : {
+                    "message": 'Model Error' 
+                }
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        user_id = request.data.get('user-id')
+
+        chat = Chat(user_id=user_id, name=result['english'][0][:30]+'...')  # Provide a name for the chat
         chat.save()
+        new_chat_id = chat.chat_id
 
-        prompt = Prompt(chat_id=chat.chat_id, prompt='***DOC***'+prompt, ans={"English": "English Text", "Hindi": "Hindi Text"}, langs=["English", "Hindi"])
+        prompt = Prompt(chat_id=new_chat_id, prompt='***DOC***'+uploaded_file.name+'*#*#*#'+prompt, ans={"English": result['english'], "Hindi": result['hindi']}, langs=["English", "Hindi"])
         prompt.save()
-
-        time.sleep(3)
-        return Response({
+        
+        return JsonResponse({
             'meta' : {
                 'status_code' : 200,
                 'message' : 'success'
@@ -91,25 +104,8 @@ def upload_document(request):
             }
         }, status=status.HTTP_200_OK)
 
-        ############### CORRECT CODE ######################
-        result = request_response(prompt)
-        
-        if result == -1:
-            return JsonResponse({"message": 'Error'})
-        else:
-            return JsonResponse({
-                "qid": uuid.uuid1(),
-                "aid": uuid.uuid1(),
-                "question": 'Can you Summarize?',
-                "message": 'Generation Successful',
-                "english": result['english'],
-                "hindi": result['hindi']
-                }, 
-                status=200
-                )
     else:
         return JsonResponse({"message": 'No document uploaded'}, status=400)
-        ############### -------- CORRECT CODE END ######################
 
 
 @sync_to_async
@@ -118,26 +114,55 @@ def summarize(request):
 
     header = get_summarize_header()
     json_data = json.loads(request.body)
-  
-    prompt = "### Instruction: " + header + "\n" + \
-             "### Input: " +  json_data['prompt'] + "\nPlease provide a detailed 2-paragraph summary of the above text." + \
+    
+    print(json_data)
+    prompt = "### Input: " +  json_data['prompt'] + \
              "\n### Response: "
 
-    result = request_response(prompt)
+    result = request_response(prompt, False)
+        
+    prompt_chat = json_data['prompt']
+
+    user_id = json_data['user-id'] 
+    chat_id = json_data.get('chat-id') 
+    new_chat_id = None
+
+    if chat_id:
+        new_chat_id = chat_id
+
+    else:
+        chat = Chat(user_id=user_id, name=result['english'][0][:30]+'...')  # Provide a name for the chat
+        chat.save()
+        new_chat_id = chat.chat_id
+
+    prompt = Prompt(chat_id=new_chat_id, prompt=prompt_chat, ans={"English": result['english'], "Hindi": result['hindi']}, langs=["English", "Hindi"])
+    prompt.save()
 
     if result == -1:
-            return JsonResponse({"message": 'Error'})
-    else:
         return JsonResponse({
-            "qid": uuid.uuid1(),
-            "aid": uuid.uuid1(),
-            "question": json_data['prompt'],
-            "message": 'Generation Successful',
-            "english": result['english'],
-            "hindi": result['hindi']
-            }, 
-            status=200
-            )
+                'meta' : {
+                    'status_code' : 500,
+                    'message' : 'failure'
+                },
+                'data' : {
+                    "message": 'Model Error' 
+                }
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+         return JsonResponse({
+            'meta' : {
+                'status_code' : 200,
+                'message' : 'success'
+            },
+            'data' : {
+                'prompt_id' : prompt.prompt_id,
+                'chat_id' : prompt.chat_id,
+                'prompt' : prompt.prompt,
+                'ans' : prompt.ans,
+                'langs' : prompt.langs,
+                'timestamp' : prompt.created_at
+            }
+        }, status=status.HTTP_200_OK)
     
 
 @sync_to_async
