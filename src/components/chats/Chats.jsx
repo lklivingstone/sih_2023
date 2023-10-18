@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { redirect, useNavigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
+import { redirect, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 // import { fetchChats } from "../Redux/apiCalls";
@@ -13,38 +13,18 @@ import './Chats.css'
 import "../customScrollbar/CustomScrollbar.css";
 
 const Chats = () => {
-    // const user= useSelector((state)=>state.user)
+    const user_id= useSelector((state)=>state.user.user_id)
+    console.log(user_id)
     // const username= user.user.username
     const username= "creed"
     const navigate = useNavigate();
 
+    const location= useLocation();
+    const chat_id= location.pathname.split("/")[2];
+
     // const token= user.token
     // 123, 123, 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 
     const [chats, setChats]= useState([
-        {
-            'id': 1,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 2,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 3,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 1,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 2,
-            'desc': "Lorem Ipsum"
-        },
-        {
-            'id': 3,
-            'desc': "Lorem Ipsum"
-        }
     ])
     // const dispatch= useDispatch()
     // const navigate= useNavigate()
@@ -71,19 +51,50 @@ const Chats = () => {
     
     //     fetchData();
     // }, []);
+
+    const addChatsCallback = (chat) => {
+        setChats((prevChat) => [ chat, ...prevChat ]);
+    };
+
+    const handleRedirectClick = (link) => {
+        navigate(`/c/${link}`)
+    }
+
+    
+    const handleHomeRedirectClick = (link) => {
+        navigate(`/`)
+    }
+
+    useEffect(() => {
+
+        const getChatsFunction = async () => {
+
+            try {
+                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-user-id/?user-id=${user_id}`);
+                    console.log(response.data)
+                    const responseData = response.data
+                    responseData.forEach((item) => {
+
+                        console.log(item)
+                        addChatsCallback({
+                            "id": item['chat_id'],
+                            "name": item['name'],
+                        })
+                    })
+                
+            }
+            catch (err) {
+    
+            }
+        }
+        getChatsFunction()
+    }, []);
     
 
     const renderChats = (chats) => {
         return (
             <ul>
                 {chats.length>0 && chats?.map(chat => (
-                    // <Link to={`/chat/${chat.id}`}
-                    // onClick={handleClick(chat.id)}
-                    //         style={{
-                    //         textDecoration: 'none',
-                    //         color: 'black'
-                    //     }}
-                    // >
                         <li
                             className='each-chat-li'
                             style={{display: "flex",
@@ -94,21 +105,15 @@ const Chats = () => {
                             listStyleType: "none"}}
                             key={chat.id}
                             >
-                                {/* <div
-                                onClick={(e)=>handleClick(chat)}
-                                className='each-chat-div'>
-                                    <p
-                                        style={{paddingLeft: "10px",
-                                        color: "white"}}
-                                    >
-                                        {chat.desc}
-                                    </p>
-                                </div> */}
-                                <button className='each-chat-button'>
-                                    test
+                                <button 
+                                style={{
+                                    backgroundColor: chat.id === chat_id ? '#e4d7ee' : '#D2B7E5',
+                                }}
+                                onClick={() => handleRedirectClick(chat.id)}
+                                className='each-chat-button'>
+                                    {chat.name}
                                 </button>
                         </li>
-                    // </Link>
                 ))}
             </ul>
         );
@@ -127,12 +132,17 @@ const Chats = () => {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                <button className='new-chat-button'>
+                <button 
+                style={{    
+                    cursor: "pointer"
+                }}
+                onClick={() => handleHomeRedirectClick()}
+                className='new-chat-button'>
                     New Chat <AddIcon />
                 </button>
             </div>
             <div className='each-chat-div' style={{
-                flex: 4,
+                flex: 10,
                 
                 overflowX: "hidden",
             }}>
@@ -141,12 +151,12 @@ const Chats = () => {
                         margin: "5%",
                         color: "#D2B7E5"
                     }}
-                >My Chats</h3>
+                >Summarization:</h3>
             {
                 renderChats(chats)
             }
             </div>
-            <div 
+            {/* <div 
             className='custom-scrollbar'
             style={{
                 flex: 4,
@@ -162,7 +172,7 @@ const Chats = () => {
             {
                 renderChats(chats)
             }
-            </div>
+            </div> */}
             <div style={{
                 flex: 3,
                 display: "flex"
