@@ -21,6 +21,9 @@ import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import { Wobble } from '@uiball/loaders'
 
+import { NewtonsCradle } from '@uiball/loaders'
+
+
 
 const { reverse } = Array;
 
@@ -28,8 +31,15 @@ const Promptbox = ({name}) => {
     // const ID = useSelector((state)=>state.user.chatID)
     const ID = 1;
     const location= useLocation();
-    const chat_id= location.pathname.split("/")[2];
+    const [chat_id, setChatID] = useState(location.pathname.split("/")[2])
+    // let chat_id= location.pathname.split("/")[2];
     console.log(chat_id)
+    useEffect(() => {
+        setChatID(location.pathname.split("/")[2])
+        setMessages([])
+        console.log("CHANGED")
+        // chat_id= location.pathname.split("/")[2];
+    }, [location])
     // const recipient = useSelector((state)=>state.user.recipient)
     const [messageInput, setMessageInput] = useState('');
     const [messageValue, setMessageValue]= useState('');
@@ -37,26 +47,7 @@ const Promptbox = ({name}) => {
     
     // const username = useSelector((state) => state.user.user.username);
     const username = "creed";
-    const [messages, setMessages] = useState([
-        // {
-        //     "id": 1,
-        //     "author": "creed",
-        //     "content": "This is the first text"
-
-        // },
-        // {
-        //     "id": 2,
-        //     "author": "llm",
-        //     "currIndex" : 0,
-        //     "totalLangs" : 2,
-        //     'langs' : ['English', 'Hindi'],
-        //     "content": {
-        //         'English' : "This is second text",
-        //         'Hindi' : "Hindi This is second text"
-        //     }
-        // },
-
-    ]);
+    const [messages, setMessages] = useState([]);
     const messagesEndRef = useRef(null)
     const addMessageCallback = (message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
@@ -73,7 +64,7 @@ const Promptbox = ({name}) => {
             try {
                 if (chat_id) {
     
-                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-chat-id/?chat_id=${chat_id}`);
+                    const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-chat-id/?chat-id=${chat_id}`);
                     console.log(response.data)
                     const responseData = response.data
                     responseData.forEach((item) => {
@@ -93,10 +84,16 @@ const Promptbox = ({name}) => {
                         item['langs'] = matches
         
                         if (item['prompt'].substring(0, 9) === '***DOC***') {
+                            item['prompt'] = item['prompt'].slice(9)
+                            const parts = item['prompt'].split("*#*#*#");
+
+                            // Take the first element of the array
+                            const pathName = parts[0];
+                            console.log(pathName)
                             addMessageCallback({
                                 "id": item['chat_id']+"u",
                                 "author": "creed",
-                                "content": "DOC",
+                                "content": pathName,
                             })
                         }
                         else {
@@ -124,7 +121,7 @@ const Promptbox = ({name}) => {
             }
         }
         getChatsFunction()
-    }, []);
+    }, [chat_id]);
 
     useEffect(() => {
         scrollToBottom()
@@ -192,23 +189,33 @@ const Promptbox = ({name}) => {
                 className={message.author === username ? 'right' : 'left'} 
                 style={{
                     display: "flex",
-                marginBottom: "15px",
-                listStyleType: "none",
-                justifyContent: message.author === username ? "flex-end" : 'flex-start'
+                    marginBottom: "15px",
+                    listStyleType: "none",
+                    justifyContent: message.author === username ? "flex-end" : 'flex-start'
                 }}
                 key={message.id}>
                     {message.author === username ? (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600"}}
-                        sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
+                        style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
+                        sx={{ backgroundColor: "transparent", color: "#303030", border: "none" }}
                         >
-                            <p>{message.content}</p>
+                            {
+                                message.content.slice(-4) === '.pdf' ?
+                                (
+                                    <>
+                                        <InsertDriveFileOutlinedIcon />
+                                        <p>{message.content}</p>
+                                    </>
+                                ) : (
+                                    <p>{message.content}</p>
+                                )
+                            }
                         </Paper>
                     ) : (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600", position: "relative", paddingBottom: "50px"  }}
+                        style={{ width: "100%", padding: "5px 30px", fontWeight: "600", position: "relative", paddingBottom: "50px"  }}
                         sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
                         >
                         <p>{message.content[message.langs[message.currIndex]]}</p>
@@ -224,7 +231,8 @@ const Promptbox = ({name}) => {
                         
                         >
                             <ArrowLeftOutlinedIcon style={{
-                                fontSize: "40px"
+                                fontSize: "40px",
+                                cursor: "pointer"
                             }} 
                             onClick={(e)=>handleArrowLeftClick(message, index)}
                             />
@@ -233,7 +241,8 @@ const Promptbox = ({name}) => {
                                 {message.langs[message.currIndex]}
                             </p>
                             <ArrowRightOutlinedIcon style={{
-                                fontSize: "40px"
+                                fontSize: "40px",
+                                cursor: "pointer"
                             }} 
                             onClick={(e)=>handleArrowRightClick(message, index)}
                             />
@@ -256,11 +265,20 @@ const Promptbox = ({name}) => {
                     key={1000}>
                             <Paper
                             variant="outlined"
-                            style={{ padding: "5px 30px", fontWeight: "600"}}
-                            sx={{ backgroundColor: "#E4CEFF", color: "#303030" }}
+                            style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
+                            sx={{ backgroundColor: "transparent", color: "#303030", border: "none"  }}
                             >
-                            <p>{tempMessage}</p>
-
+                                {
+                                    tempMessage.slice(-4) === '.pdf' ?
+                                    (
+                                        <>
+                                            <InsertDriveFileOutlinedIcon />
+                                            <p>{tempMessage}</p>
+                                        </>
+                                    ) : (
+                                        <p>{tempMessage}</p>
+                                    )
+                                }
                             </Paper>
                 </li>
                 <li
@@ -278,7 +296,12 @@ const Promptbox = ({name}) => {
                         style={{ padding: "5px 30px", fontWeight: "600", paddingBottom: "50px"  }}
                         sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
                         >
-                        <Wobble size = {45} color = 'black' speed = {0.9}/>
+                        {/* <Wobble size = {45} color = 'black' speed = {0.9}/> */}
+                        <NewtonsCradle 
+                        size={45}
+                        speed={1.4} 
+                        color="black" 
+                        />
                         
                         </Paper>
                 </li>
@@ -303,10 +326,10 @@ const Promptbox = ({name}) => {
         if (image) {
             const formData = new FormData();
             formData.append('document', image);
-            formData.append('user_id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
             
             try {
-                setTempMessage("DOC")
+                setTempMessage(image['name'])
                 const config = {
                     headers: {
                       'Content-Type': 'multipart/form-data'
@@ -327,18 +350,23 @@ const Promptbox = ({name}) => {
                 setTempMessage('')
 
                 const response_data = response["data"]["data"]
+                setImage(null)
                 
-                if (!chat_id) {
+                if (response_data['chat_id']) {
+                    console.log(response_data['chat_id'])
                     navigate(`/c/${response_data['chat_id']}`);
-
+                    // window.location.reload();
                 }
                 
                 // console.log(response_data['prompt'])
+                // console.log(image)
                 if (response_data['prompt'].substring(0, 9) === '***DOC***') {
+                    const parts = response_data['prompt'].split("*#*#*#");
+
                     addMessageCallback({
                         "id": response_data['chat_id']+"u",
                         "author": "creed",
-                        "content": "DOC",
+                        "content": parts[0],
                     })
                 }
                 else {
@@ -359,7 +387,6 @@ const Promptbox = ({name}) => {
                     "content": response_data['ans']
                 })
     
-                setImage(null)
     
                 // console.log("Clicked")
             } catch (error) {
@@ -369,41 +396,61 @@ const Promptbox = ({name}) => {
             }
         }
         else {
-
-            // console.log("clcked")
-            // const formData = new FormData();
-            // formData.append('document', image);
             
             try {
+                setTempMessage(query)
+                setQuery("")
+
                 const config = {
-                    prompt: query
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
                 };
                 
-                const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', config);
+                const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', {
+                    "prompt" : query,
+                    'user-id' : 'e219ade0-1cc0-4b07-804d-f6f10a25dc23',
+                    'chat-id' : chat_id
+                });
                 
-                // {
-                //     "id": 1,
-                //     "author": "creed",
-                //     "content": "This is the first text"
-                // }
-                
-                // console.log(response)
+                setTempMessage('')
 
-                console.log(response["data"])
-    
-                addMessageCallback({
-                    "id": response["data"]["qid"],
-                    "author": "creed",
-                    "content": response["data"]["question"],
-                })
+
+                const response_data = response["data"]["data"]
+                
+                if (!chat_id) {
+                    navigate(`/c/${response_data['chat_id']}`);
+
+                }
+                
+                // console.log(response_data['prompt'])
+                if (response_data['prompt'].substring(0, 9) === '***DOC***') {
+                    addMessageCallback({
+                        "id": response_data['chat_id']+"u",
+                        "author": "creed",
+                        "content": query,
+                    })
+                }
+                else {
+                    addMessageCallback({
+                        "id": response_data['chat_id']+"u",
+                        "author": "creed",
+                        "content": query,
+                    })
+                }
                 
                 addMessageCallback({
-                    "id": response["data"]["aid"],
+                    "id": response_data['chat_id']+"m",
                     "author": "llm",
-                    "content": response["data"]["english"] + "\n \n" + response["data"]["hindi"],
+                    "currIndex" : 0,
+                    "totalLangs" : response_data['langs'].length,
+                    'langs' : response_data['langs'],
+                    'timestamp' : response_data['timestamp'],
+                    "content": response_data['ans']
                 })
     
                 setImage(null)
+                setQuery("")
     
                 // console.log("Clicked")
             } catch (error) {
@@ -428,6 +475,7 @@ const Promptbox = ({name}) => {
     const hangleMessageInput= (data) => {
       setMessageValue(data)
       setMessageInput(data)
+    //   console.log(messageInput)
     }
   
     const messageInputField = (
@@ -456,18 +504,24 @@ const Promptbox = ({name}) => {
 
     const [image, setImage] = useState(null);
     const handleFileInputChange = (event) => {
-        console.log("file")
+        // console.log("file")
         const file = event.target.files[0];
         // Handle the selected file here
         setImage(file)
+
     };
-    console.log(image)
+
+    useEffect(()=>{
+        if (image) {
+            console.log(image['name'])
+        }
+    }, [image])
 
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };
 
-    const [isFocused, setIsFocused] = React.useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
     const handleFocus = () => {
         setIsFocused(true);
@@ -479,58 +533,64 @@ const Promptbox = ({name}) => {
 
     const textareaClass = isFocused ? 'focused-textarea' : 'normal-textarea';
 
+    const handleEnterKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          // Pressed Enter without Shift key
+          e.target.blur();
+          handleQuerySubmit(e);
+        }
+      };
+    
 
     // console.log(query)
 
     const messagingField= (
       <>
         <input
-                type="file"
-                style={{ display: 'none' }}
-                // style={{ width: "150px"}}
-                ref={fileInputRef}
-                onChange={(e)=>handleFileInputChange(e)}
-                />
-                    <button 
-                    className="upload-icon" 
-                    onClick={handleButtonClick}>
-                        Upload PDF
-                        {
-                        !image ? <FileUploadOutlinedIcon fontSize="large"  /> : 
-                        <CloudDoneOutlinedIcon fontSize="large" /> 
-                        }
-                    </button>
-                    <div style={{
-                        width: "80%",
-                        padding: 0,
-                        margin: "20px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "5px",
-                        backgroundColor: "#303030",
-                        position: "relative"
-                    }}>
-                        <textarea
-                            onChange={(e)=>setQuery(e.target.value)}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            className={textareaClass}
-                            placeholder="Type your query..."
-                        />
-                        <SendRoundedIcon 
-                            onClick={(e)=>handleQuerySubmit(e)}
-                            style={{
-                                zIndex: 10000,
-                            position: "absolute",
-                            right: "5px",
-                            color: "white",
-                            bottom: "13px",
-                            cursor: "pointer",
-                        
-
-                        }} /> 
-                    </div>
+            type="file"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={(e) => handleFileInputChange(e)}
+        />
+        <button
+            className="upload-icon"
+            onClick={handleButtonClick}
+        >
+            Upload PDF
+            {!image ? <FileUploadOutlinedIcon fontSize="large" /> : <CloudDoneOutlinedIcon fontSize="large" />}
+        </button>
+        <div style={{
+            width: "80%",
+            padding: 0,
+            margin: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "5px",
+            backgroundColor: "#303030",
+            position: "relative"
+        }}>
+            <textarea
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleEnterKeyPress}  // Handle Enter key press
+            className={textareaClass}
+            placeholder="Type your query..."
+            value={query}
+            />
+            <SendRoundedIcon
+            onClick={(e) => handleQuerySubmit(e)}
+            style={{
+                zIndex: 10000,
+                position: "absolute",
+                right: "5px",
+                color: "white",
+                bottom: "13px",
+                cursor: "pointer",
+            }}
+            />
+        </div>
       </>
 
   )
@@ -552,6 +612,7 @@ const Promptbox = ({name}) => {
                 (chat_id || tempMessage !== '') &&
                 <div
                     style={{
+                        // backgroundColor: "white",   
                         padding: "20px",
                         flex: 1, 
                         width: "100%",
@@ -655,6 +716,11 @@ const Promptbox = ({name}) => {
                     </div>
                 </>
             }
+            <div style={{
+              height: "80px",
+              width: "100%",
+            }}>
+            </div>
             <div style={{
               height: "280px",
               width: "100%",
