@@ -2,7 +2,7 @@
     display: flex;
     /* width: 100%; */
     justify-content: "flex-start";
-    color: green;
+    color: #AFCFFD;
     align-items: flex-end;
 }
 
@@ -21,18 +21,18 @@ CHAT
 
 .Chat {
     color: black;
-    background-color: #5cdb95;
+    background-color: #AFCFFD;
     width: 100vw;
 
 }
 
 .join {
-    /* margin-left: 200px; */
-    padding-left: 0px;
+    margin-left: 300px;
+    padding-left: 50px;
     /* margin-top: 60px; */
     height: 100vh;
     display: flex;
-    background-color: #5cdb95;
+    background-color: #AFCFFD;
     justify-content: flex-start;
     align-items: flex-start;
 }

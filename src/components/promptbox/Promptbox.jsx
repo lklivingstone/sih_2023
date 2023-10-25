@@ -1,6 +1,7 @@
 import './Promptbox.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 // import { useSelector } from 'react-redux';
 import SendButton from '../sendButton/SendButton';
 import Divider from '@mui/material/Divider';
@@ -20,6 +21,7 @@ import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutl
 import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import { Wobble } from '@uiball/loaders'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import { NewtonsCradle } from '@uiball/loaders'
 
@@ -29,6 +31,8 @@ const { reverse } = Array;
 
 const Promptbox = ({name}) => {
     // const ID = useSelector((state)=>state.user.chatID)
+    const userID= useSelector((state)=>state.user.user_id)
+
     const ID = 1;
     const location= useLocation();
     const [chat_id, setChatID] = useState(location.pathname.split("/")[2])
@@ -63,7 +67,7 @@ const Promptbox = ({name}) => {
 
             try {
                 if (chat_id) {
-    
+                    console.log("CHANGED CHATS")
                     const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-chat-id/?chat-id=${chat_id}`);
                     console.log(response.data)
                     const responseData = response.data
@@ -215,10 +219,27 @@ const Promptbox = ({name}) => {
                     ) : (
                         <Paper
                         variant="outlined"
-                        style={{ width: "100%", padding: "5px 30px", fontWeight: "600", position: "relative", paddingBottom: "50px"  }}
-                        sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
+                        style={{ width: "100%", padding: "5px 30px", fontWeight: "600", position: "relative", padding: "50px 50px 50px 20px", display: "flex"  }}
+                        sx={{ backgroundColor: "#ADC7FF", color: "#303030" }}
                         >
-                        <p>{message.content[message.langs[message.currIndex]]}</p>
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: "15px",
+                                    right: "25px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                                >
+                                    <MoreHorizIcon />
+                                </div>
+                            <h1
+                                style={{
+                                    paddingRight: "20px"
+                                }}
+                            >L</h1>
+                            <p>{message.content[message.langs[message.currIndex]]}</p>
                         <div
                             style={{
                                 position: "absolute",
@@ -294,7 +315,7 @@ const Promptbox = ({name}) => {
                     <Paper
                         variant="outlined"
                         style={{ padding: "5px 30px", fontWeight: "600", paddingBottom: "50px"  }}
-                        sx={{ backgroundColor: "#FFCEF1", color: "#303030" }}
+                        sx={{ backgroundColor: "#ADC7FF", color: "#303030" }}
                         >
                         {/* <Wobble size = {45} color = 'black' speed = {0.9}/> */}
                         <NewtonsCradle 
@@ -326,7 +347,7 @@ const Promptbox = ({name}) => {
         if (image) {
             const formData = new FormData();
             formData.append('document', image);
-            formData.append('user-id', 'e219ade0-1cc0-4b07-804d-f6f10a25dc23');
+            formData.append('user-id', userID);
             
             try {
                 setTempMessage(image['name'])
@@ -409,7 +430,7 @@ const Promptbox = ({name}) => {
                 
                 const response = await axios.post('http://127.0.0.1:7000/api/prompt/summarize/', {
                     "prompt" : query,
-                    'user-id' : 'e219ade0-1cc0-4b07-804d-f6f10a25dc23',
+                    'user-id' : userID,
                     'chat-id' : chat_id
                 });
                 
@@ -599,14 +620,25 @@ const Promptbox = ({name}) => {
 
     
     return (
+        <div
+        style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            width: "calc(100% - 320px)"
+        }}
+        >
+
         <div style={{
-          height: "100vh", 
+          height: "calc(100vh - 40px)", 
           width: "100%",
           paddingTop: "70px",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#D2B7E5",
-          position: "relative"
+          backgroundColor: "#DBE9EB",
+          position: "relative",
+          borderRadius: "10px"
         }}>
             {
                 (chat_id || tempMessage !== '') &&
@@ -739,6 +771,8 @@ const Promptbox = ({name}) => {
               {messagingField}
             </div>
         </div>
+        </div>
+
     );
   }
 

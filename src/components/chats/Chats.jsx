@@ -26,6 +26,7 @@ const Chats = () => {
     // 123, 123, 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 'abc', 'def', 'ghi', 
     const [chats, setChats]= useState([
     ])
+    console.log(chats)
     // const dispatch= useDispatch()
     // const navigate= useNavigate()
 
@@ -57,7 +58,9 @@ const Chats = () => {
     };
 
     const handleRedirectClick = (link) => {
-        navigate(`/c/${link}`)
+        if (link !== chat_id) {
+            navigate(`/c/${link}`)
+        } 
     }
 
     
@@ -70,6 +73,7 @@ const Chats = () => {
         const getChatsFunction = async () => {
 
             try {
+                console.log(user_id)
                     const response = await axios.get(`http://127.0.0.1:7000/api/chats/by-user-id/?user-id=${user_id}`);
                     console.log(response.data)
                     const responseData = response.data
@@ -106,11 +110,16 @@ const Chats = () => {
                             key={chat.id}
                             >
                                 <button 
-                                style={{
-                                    backgroundColor: chat.id === chat_id ? '#e4d7ee' : '#D2B7E5',
-                                }}
-                                onClick={() => handleRedirectClick(chat.id)}
-                                className='each-chat-button'>
+                                    style={{
+                                        backgroundColor: chat.id === chat_id ? '#bbd7ff' : '#8DBCFF',
+                                    }}
+                                    onClick={() => 
+                                        handleRedirectClick(chat.id)
+                                    }
+                                    className='each-chat-button'
+                                    // disabled={chat.id === chat_id}
+
+                                >
                                     {chat.name}
                                 </button>
                         </li>
@@ -125,120 +134,106 @@ const Chats = () => {
 
 
     return (
-        <div className="chats">
-            <div style={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-            }}>
-                <button 
-                style={{    
-                    cursor: "pointer"
-                }}
-                onClick={() => handleHomeRedirectClick()}
-                className='new-chat-button'>
-                    New Chat <AddIcon />
-                </button>
-            </div>
-            <div className='each-chat-div' style={{
-                flex: 10,
-                
-                overflowX: "hidden",
-            }}>
-                <h3
-                    style={{
-                        margin: "5%",
-                        color: "#D2B7E5"
-                    }}
-                >Summarization:</h3>
-            {
-                renderChats(chats)
-            }
-            </div>
-            {/* <div 
-            className='custom-scrollbar'
-            style={{
-                flex: 4,
-                overflow: "scroll"
-            }}>
-            <h3
-                style={{
-                    margin: "5%",
-                    color: "#D2B7E5"
-                }}>
-                Documents
-            </h3>
-            {
-                renderChats(chats)
-            }
-            </div> */}
-            <div style={{
-                flex: 3,
-                display: "flex"
-            }}>
+        <div className='chats-container'>
+            <div className="chats">
                 <div style={{
-                    // backgroundColor: "white",
-                    width: "70%",
+                    flex: 1,
                     display: "flex",
+                    justifyContent: "center",
                     alignItems: "center",
-                    justifyContent: "center"
                 }}>
-                    <div
-                    style={{
-                        height: "70%",
+                    <button 
+                    style={{    
+                        cursor: "pointer"
+                    }}
+                    onClick={() => handleHomeRedirectClick()}
+                    className='new-chat-button'>
+                        New Chat <AddIcon />
+                    </button>
+                </div>
+                <div className='each-chat-div' style={{
+                    flex: 10,
+                    
+                    overflowX: "hidden",
+                }}>
+                    <h3
+                        style={{
+                            margin: "5%",
+                            color: "#DEDEDE"
+                        }}
+                    >Summarization:</h3>
+                {
+                    renderChats(chats)
+                }
+                </div>
+                <div style={{
+                    flex: 3,
+                    display: "flex"
+                }}>
+                    <div style={{
+                        // backgroundColor: "white",
                         width: "70%",
-                        backgroundColor: "#C6A4DE",
-                        padding: "8%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <div
+                        style={{
+                            height: "70%",
+                            width: "70%",
+                            backgroundColor: "#8DBCFF",
+                            padding: "8%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            borderRadius: "15px",
+                            boxShadow: "inset 6px 6px 10px 0 rgba(0, 0, 0, 0.2), inset -6px -6px 10px 0 rgba(255, 255, 255, 0.5)"
+
+                        }}>
+                            <p>System Monitoring</p>
+                            <button className='monitor-button'>
+                                Monitor
+                            </button>
+
+                        </div>
+                    </div>
+                    <div style={{
+                        width: "30%",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        borderRadius: "15px",
-                        boxShadow: "inset 6px 6px 10px 0 rgba(0, 0, 0, 0.2), inset -6px -6px 10px 0 rgba(255, 255, 255, 0.5)"
-
+                        justifyContent: "space-around"
                     }}>
-                        <p>System Monitoring</p>
-                        <button className='monitor-button'>
-                            Monitor
-                        </button>
-
+                        {/* <div > */}
+                            <button
+                            onClick={redirectToLogout}
+                            style={{
+                                font: "Poppins",
+                                height: "30px",
+                                width: "30px",
+                                backgroundColor: "white",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                border: "none",
+                                fontSize: "20px",
+                                cursor: "pointer"
+                            }}
+                            >
+                                J
+                            </button>
+                            {/* <h2>J</h2> */}
+                        {/* </div> */}
+                        <FirstPageIcon style={{
+                            color: "rgb(253, 208, 255)",
+                            fontSize: "35px"
+                        }} />
                     </div>
-                </div>
-                <div style={{
-                    width: "30%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "space-around"
-                }}>
-                    {/* <div > */}
-                        <button
-                        onClick={redirectToLogout}
-                        style={{
-                            font: "Poppins",
-                            height: "30px",
-                            width: "30px",
-                            backgroundColor: "white",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            border: "none",
-                            fontSize: "20px",
-                            cursor: "pointer"
-                        }}
-                        >
-                            J
-                        </button>
-                        {/* <h2>J</h2> */}
-                    {/* </div> */}
-                    <FirstPageIcon style={{
-                        color: "rgb(253, 208, 255)",
-                        fontSize: "35px"
-                    }} />
-                </div>
 
+                </div>
             </div>
+
         </div>
     )
 }

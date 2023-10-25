@@ -22,7 +22,7 @@ CHAT
 }
 
 .join {
-    margin-left: 300px;
+    margin-left: 350px;
     /* padding-left: 50px; */
     /* margin-top: 60px; */
     height: 100vh;
@@ -44,10 +44,11 @@ CHAT
     /* height: 30%; 
     border: 0;
     width: 50%; */
-    border: 3px solid #303030;
+    /* border: 3px solid #303030; */
+    border: none;
     border-radius: 7px;
     font-size: 20px;
-    background-color: transparent;
+    background-color: #E79BA3;
     color: #303030;
     display: flex;
     align-items: center;

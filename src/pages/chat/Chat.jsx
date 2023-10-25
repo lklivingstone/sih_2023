@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import Sidepanel from '../../components/sidepanel/Sidepanel';
 import Chats from '../../components/chats/Chats';
 import Promptbox from '../../components/promptbox/Promptbox';
+import "./Chat.css";
 
 const Chat = () => {
     // const token= useSelector((state)=>state.user.token)

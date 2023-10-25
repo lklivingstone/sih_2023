@@ -8,6 +8,7 @@ import Navbar from '../../components/navbar/Navbar';
 import Promptbox from '../../components/promptbox/Promptbox';
 // import Chats from '../Components/Chats';
 // import Chatbox from '../Components/Chatbox';
+import "./Home.css";
 
 const Home = () => {
     // const username= useSelector((state)=>state.user.user.username)
