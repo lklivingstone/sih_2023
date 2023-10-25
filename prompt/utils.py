@@ -4,7 +4,7 @@ import os
 
 from .translate import get_translation
 
-MODEL = "TheBloke/Llama-2-7b-chat-fp16"
+MODEL = "TheBloke/Llama-2-AWQ"
 TOKENS = 1200
 TEMP = 0.9
 ENDPOINT_URL = "http://localhost:8000/v1/completions"
@@ -22,11 +22,11 @@ HEADERS = {
     }
 
 
-def request_response(message, is_document):
+def request_response(message, is_document, isFirstMessage):
 
     hindi = []
     english = []
-    
+
     DATA['prompt'] = message
 
     print(message)
@@ -37,18 +37,38 @@ def request_response(message, is_document):
         for choice in range(NUM):
             english.append(result['choices'][choice]['text'])
             hindi.append(get_translation(result['choices'][choice]['text']))
+
+        if isFirstMessage == 1:
+            title = get_header(english[0])
+        else:
+            title = english[0][:30]
+
         return {
             "english": english,
-            "hindi": hindi
+            "hindi": hindi,
+            "title": title
         }
+
     else:
-        print("\n",f"Error: {response.status_code} - {response.text}")
+        print("\n", f"Error: {response.status_code} - {response.text}")
         return -1
+
+
+def get_header(message):
+    DATA['prompt'] = "### Instruction: \nCreate a 3 to 5 word title for the message passed using the meaning of the text. and ensure that the full semantics are captured.\n" + \
+                    "### Input:\n" + message + "\n"\
+                    "### Response:\n"
+
+    response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
+
+    if response.status_code == 200:
+        result = response.json()
+        return result['choices'][0]['text']
 
 
 def pdf_extraction_alg(uploaded_file):
 
-    root_directory_path = os.getcwd()  
+    root_directory_path = os.getcwd()
     unique_file_name = os.path.join(root_directory_path, uploaded_file.name)
 
     with open(unique_file_name, 'wb') as destination_file:
@@ -82,28 +102,10 @@ def get_summarize_header():
     return header
 
 
-def get_text_summarization():
+def get_default_header():
 
     header = ""
-    with open("prompt/headers/text_summarization.txt") as f:
-        header = f.read()
-
-    return header
-
-
-def get_science_tech_news():
-
-    header = ""
-    with open("prompt/headers/science_and_tech_and_news.txt") as f:
-        header = f.read()
-
-    return header
-
-
-def get_grammar_checks():
-
-    header = ""
-    with open("prompt/headers/grammar_checks.txt") as f:
+    with open("prompt/headers/default.txt") as f:
         header = f.read()
 
     return header
