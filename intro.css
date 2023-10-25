@@ -251,7 +251,7 @@ li a:hover {
 .images::before {
     content: "";
     position: absolute;
-    width: 100%;
+    width: 720px;
     height: calc(100%);
     left: 50%;
     bottom: 0;
