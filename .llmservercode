@@ -1,5 +1,5 @@
 python3 -m vllm.entrypoints.openai.api_server \
-    --model TheBloke/Nous-Hermes-Llama-2-7B-AWQ --quantization awq --dtype float16
+    --model TheBloke/Nous-Hermes-Llama2-AWQ --quantization awq --dtype float16
     
 python3 -m vllm.entrypoints.openai.api_server \
     --model TheBloke/Nous-Hermes-Llama2-GPTQ 
