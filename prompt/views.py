@@ -74,7 +74,7 @@ def upload_document(request):
                  "of the above text." + \
                  "\n### Response:\n"
 
-        result = request_response(prompt, True)
+        result = request_response(prompt, True, 1)
 
         if result == -1:
             return JsonResponse({
@@ -89,7 +89,7 @@ def upload_document(request):
 
         user_id = request.data.get('user-id')
         # Provide a name for the chat
-        chat = Chat(user_id=user_id, name=result['english'][0][:37]+'...')
+        chat = Chat(user_id=user_id, name=result['title'])
         chat.save()
         new_chat_id = chat.chat_id
 
