@@ -25,7 +25,7 @@ const Login = () => {
 
     return (
         <div style={{width: "100%",
-            backgroundColor: "#D2B7E5",
+            backgroundColor: "#AFCFFD",
             height: "100vh",
             color:"rgb(48, 48, 48)",
             display: "flex",

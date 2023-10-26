@@ -22,10 +22,22 @@ import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import { Wobble } from '@uiball/loaders'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
+import SimCardDownloadOutlinedIcon from '@mui/icons-material/SimCardDownloadOutlined';
 
+import {
+    Document,
+    Page,
+    Text,
+    View,
+    StyleSheet,
+    PDFViewer,
+  } from "@react-pdf/renderer";
+import { pdf } from '@react-pdf/renderer';
+  
 import { NewtonsCradle } from '@uiball/loaders'
 
-
+import { saveAs } from 'file-saver';
 
 const { reverse } = Array;
 
@@ -60,6 +72,51 @@ const Promptbox = ({name}) => {
     const scrollToBottom = () => {
       messagesEndRef.current?.scrollIntoView()
     }
+
+    const styles = StyleSheet.create({
+        page: {
+          backgroundColor: "white",
+          color: "#303030",
+        },
+        section: {
+          margin: 10,
+          padding: 10,
+        },
+        viewer: {
+          width: window.innerWidth, //the pdf viewer will take up all of the width and height
+          height: window.innerHeight,
+        },
+
+          text: {
+            fontSize: 12,
+            marginBottom: 10,
+          },
+        
+      });
+
+      const PdfGenerator = ({ texts }) => (
+        // <PDFViewer style={styles.viewer}>
+          <Document>
+            <Page size="A4" style={styles.page}>
+              <View style={styles.section}>
+                <Text style={styles.text}>{texts}</Text>
+            </View>
+            </Page>
+          </Document>
+        // </PDFViewer>
+      );
+      
+      const handleDownloadPdf = async (texts) => {
+        console.log(texts[0])
+        const blob = await pdf(
+          <PdfGenerator texts={texts[0]} />,
+          { scale: 0.7 } // Adjust the scale as needed
+        ).toBlob();
+    
+        saveAs(blob, 'document.pdf');
+      };
+    
+
 
     useEffect(() => {
 
@@ -184,6 +241,19 @@ const Promptbox = ({name}) => {
         });
     };
 
+    // const [showIcons, setShowIcons] = useState(false);
+
+    // const handleMoreHorizClick = () => {
+    //     setShowIcons(!showIcons);
+    //   };
+
+      const [showIcons, setShowIcons] = useState(null); // Track selected message's index
+
+  const handleMoreHorizClick = (index) => {
+    setShowIcons(index === showIcons ? null : index);
+  };
+
+    
       
     const renderMessages = (messages) => {
         return (
@@ -201,7 +271,7 @@ const Promptbox = ({name}) => {
                     {message.author === username ? (
                         <Paper
                         variant="outlined"
-                        style={{ padding: "5px 30px", fontWeight: "600", display: "flex"}}
+                        style={{ fontWeight: "600", display: "flex", padding: "50px 50px 50px 50px"}}
                         sx={{ backgroundColor: "transparent", color: "#303030", border: "none" }}
                         >
                             {
@@ -229,17 +299,48 @@ const Promptbox = ({name}) => {
                                     right: "25px",
                                     display: "flex",
                                     alignItems: "center",
-                                    justifyContent: "center"
+                                    justifyContent: "center",
+                                    gap: "5px"
                                 }}
-                                >
-                                    <MoreHorizIcon />
+                                >   
+                                    {/* <VolumeUpOutlinedIcon /> */}
+                                    {/* <SimCardDownloadOutlinedIcon onClick={(e) => handleDownloadPdf(message.content[message.langs[message.currIndex]])}/> */}
+                                    <MoreHorizIcon onClick={() => handleMoreHorizClick(index)} />
+                                    {showIcons === index && (
+                                    <div
+                                        style={{
+                                        position: "absolute",
+                                        top: "0px",
+                                        right: "30px",
+                                        opacity: showIcons === index ? 1 : 0,
+                                        visibility: showIcons === index ? 'visible' : 'hidden',
+                                        pointerEvents: showIcons === index ? 'auto' : 'none',
+                                        transition: "right 0.3s ease, opacity 0.3s ease, visibility 0.3s ease",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        gap: "5px",
+                                        }}
+                                    >
+                                        <VolumeUpOutlinedIcon />
+                                        <SimCardDownloadOutlinedIcon onClick={(e) => handleDownloadPdf(message.content[message.langs[message.currIndex]])} />
+                                    </div>
+                                    )}
                                 </div>
-                            <h1
-                                style={{
-                                    paddingRight: "20px"
+                            <img src={require('../../assets/logo.png')} alt='L' width="32" height="32" 
+                            style={{
+                                    marginRight: "20px"
                                 }}
-                            >L</h1>
-                            <p>{message.content[message.langs[message.currIndex]]}</p>
+                            />
+                            <pre
+                                style={{
+                                    whiteSpace: "pre-wrap",
+                                    fontFamily: "Poppins"
+                                }}
+                            >
+                                {message.content[message.langs[message.currIndex]]}
+                            </pre>
+                            {/* <p>{message.content[message.langs[message.currIndex]]}</p> */}
                         <div
                             style={{
                                 position: "absolute",
@@ -626,10 +727,19 @@ const Promptbox = ({name}) => {
             alignItems: "center",
             justifyContent: "center",
             height: "100vh",
-            width: "calc(100% - 320px)"
+            width: "calc(100% - 320px)",
+            flexDirection: "column"
         }}
         >
-
+            {/* <div style={{
+                height: "60px"
+            }}>
+                <h1
+                style={{
+                    color: "#303030"
+                }}
+                >SCOTTS GPT</h1>
+            </div> */}
         <div style={{
           height: "calc(100vh - 40px)", 
           width: "100%",
@@ -649,7 +759,7 @@ const Promptbox = ({name}) => {
                         flex: 1, 
                         width: "100%",
                         display: "flex",
-                        overflowY: "auto"
+                        overflowY: "auto",
                     }}
                 >
                     {renderMessages(messages)}
@@ -686,7 +796,7 @@ const Promptbox = ({name}) => {
                         }}
                             // className='new-chat-button'
                         >
-                            Characteristics Length of Ray ...
+                            Characteristics Length of Ray...
                         </button>
                         <button
                         style={{
@@ -706,7 +816,7 @@ const Promptbox = ({name}) => {
                         }}
                             // className='new-chat-button'
                         >
-                            Busbar in Power Plant purpo ...
+                            Busbar in Power Plant purpo...
                         </button>
                         <button
                         style={{
@@ -726,7 +836,7 @@ const Promptbox = ({name}) => {
                         }}
                             // className='new-chat-button'
                         >
-                            Coordinator Geometry % Line ...
+                            Coordinator Geometry % Line...
                         </button>
                     </div>
                     <div
@@ -754,7 +864,7 @@ const Promptbox = ({name}) => {
             }}>
             </div>
             <div style={{
-              height: "280px",
+              height: "20px",
               width: "100%",
               // position: "fixed",
               // bottom: '0',
@@ -763,8 +873,7 @@ const Promptbox = ({name}) => {
                         // justifyContent: "center",
             //   backgroundColor: "#D2B7E5",
               position: "absolute",
-              bottom: "0",
-            //   zIndex: "-1"
+              bottom: "0"
             }}>
               {/* {messageInputField}
               {sendMessageButton} */}

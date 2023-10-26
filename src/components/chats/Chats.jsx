@@ -226,7 +226,7 @@ const Chats = () => {
                             {/* <h2>J</h2> */}
                         {/* </div> */}
                         <FirstPageIcon style={{
-                            color: "rgb(253, 208, 255)",
+                            color: "#8DBCFF",
                             fontSize: "35px"
                         }} />
                     </div>
