@@ -29,8 +29,7 @@ def request_response(message, is_document, isFirstMessage):
 
     DATA['prompt'] = message
 
-    print(message)
-    response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS)
+    response = requests.post(ENDPOINT_URL, json=DATA, headers=HEADERS, stream=True)
 
     if response.status_code == 200:
         result = response.json()

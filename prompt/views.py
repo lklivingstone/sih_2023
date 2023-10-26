@@ -21,6 +21,10 @@ from chats.models import (
     Prompt
 )
 
+from chats.serializers import (
+    PromptSerializer
+)
+
 
 init_translator()
 
@@ -132,11 +136,30 @@ def summarize(request):
     json_data = json.loads(request.body)
 
     # print(json_data)
-    prompt = "### Instruction:\n" + header +\
-        "\n### Input:\n" + json_data['prompt'] + \
-             "\n### Response:\n"
 
     chat_id = json_data.get('chat-id')
+
+    context = ""
+
+    if chat_id:
+        prev_prompts = Prompt.objects.filter(chat_id=chat_id).order_by('-created_at')[:5]
+        serializer = PromptSerializer(prev_prompts, many=True)
+
+        for each_prompt in serializer.data:
+            context += "\n### Input:\n" + each_prompt['prompt'] + \
+            "\n### Response:\n" + each_prompt['ans']['English'][0]
+
+    # print(serializer.data[0]['prompt'], serializer.data[0]['ans']['English'][0])
+
+    prompt = "### Instruction:\n" + header + \
+        context + \
+        "\n### Input:\n" + json_data['prompt'] + \
+        "\n### Response:\n"
+    
+
+    # return JsonResponse({
+    #     "Message": "Success"
+    # }, status=status.HTTP_200_OK)
 
     if chat_id:
         first_message = 1
@@ -146,6 +169,8 @@ def summarize(request):
     result = request_response(prompt, False, first_message)
 
     prompt_chat = json_data['prompt']
+
+    print(result['english'])
 
     user_id = json_data['user-id']
     chat_id = json_data.get('chat-id')
