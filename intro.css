@@ -25,6 +25,7 @@ body {
 .img-w {
     max-width: 100%;
     height: auto;
+    
 }
 
 header {
@@ -121,8 +122,21 @@ li a:hover {
     /* display: flex;
     border: 2px solid;
     border-radius: 80px; */
+}
 
+.video-title   {
+    /*Make the video title to be in the center*/
+    margin-bottom: 20px; 
+}
 
+.video   {
+    display: flex; 
+    justify-content: space-around; 
+    margin-bottom: 60px;
+}
+
+.img-title    {
+    margin-bottom: 20px;
 }
 
 .content-card-container {
@@ -137,9 +151,24 @@ li a:hover {
     height: auto;
     border: 1px solid white;
     background-color: papayawhip;
-    width: 25%;
+    width: 29%;
     border-radius: 20px;
+    margin-left: 60px;
 }
+
+.content-card-features {
+    padding: 20px;
+    height: auto;
+    border: 1px solid white;
+    background-color: papayawhip;
+    width: 29%;
+    border-radius: 20px;
+    margin-left: 100px;
+}
+
+
+
+
 
 .content-card-vm {
     margin: 0;
@@ -151,6 +180,10 @@ li a:hover {
 }
 
 .content-card:hover {
+    box-shadow: 3px 3px 20px lightsteelblue;
+}
+
+.content-card-features:hover {
     box-shadow: 3px 3px 20px lightsteelblue;
 }
 
@@ -269,6 +302,7 @@ li a:hover {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 50px;
     border-radius: 50px;
     display: flex;
     justify-content: center;
@@ -276,6 +310,13 @@ li a:hover {
     position: relative;
     text-align: center;
     z-index: -1;
+}
+
+.gif   {
+    /*while resizing the window, make the gif to maintain a constant gap from the video which is on the left*/
+    margin-left: 30px;
+    display: flex;
+    justify-content: space-between;
 }
 
 
@@ -310,6 +351,11 @@ li a:hover {
     }
 }
  .dark-mode .content-card  {
+    color: black;
+    background-color:rgb(216, 204, 218);
+ }
+
+ .dark-mode .content-card-features  {
     color: black;
     background-color:rgb(216, 204, 218);
  }
@@ -391,4 +437,112 @@ li a:hover {
     }
 }
 
+
+@media screen and (max-width: 1024px )   {
+
+    .content-card-container  {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content-card {
+        width: 80%; /* Adjust the width as needed */
+        margin-bottom: 20px; /* Optional margin between cards */
+    }
+
+    .content-card-features {
+        width: 80%; /* Adjust the width as needed */
+        margin-bottom: 20px; /* Optional margin between cards */
+        margin-right: 60px;
+    }
+
+    .content-card-vm {
+        width: 80%; /* Adjust the width as needed */
+        margin-bottom: 20px; /* Optional margin between cards */
+        justify-content: space-around;
+    }
+    
+
+    .content-card-vision   {
+        margin-bottom: 20px;
+    }
+
+    .images::before {
+        background: none;
+        box-shadow: none;
+    }
+
+    .video-title   {
+        /*Make the video title to be in the center*/
+        text-align: center;
+        margin-bottom: 20px;   
+    }
+
+    .img-title   {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .video    {
+        flex-direction: column;
+        align-items: center;  
+
+    }
+
+    .gif    {
+        margin-top: 30px;
+    }
+
+}
+
+@media screen and (max-width: 500px )   {
+
+    .content-card-container  {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content-card {
+        width: 80%; /* Adjust the width as needed */
+        margin-bottom: 20px; /* Optional margin between cards */
+    }
+
+    .content-card-features {
+        width: 80%; /* Adjust the width as needed */
+        margin-bottom: 20px; /* Optional margin between cards */
+    }
+
+    .content-card-vm {
+        width: 80%; /* Adjust the width as needed */
+        margin-bottom: 20px; /* Optional margin between cards */
+        justify-content: space-around;
+    }
+
+    .content-card-vision   {
+        margin-bottom: 20px;
+    }
+
+    .video-title   {
+        /*Make the video title to be in the center*/
+        text-align: center;
+        margin-bottom: 20px;
+        
+    }
+
+    .video    {
+        flex-direction: column;
+        align-items: center;  
+
+    }
+
+    .gif    {
+        margin-top: 30px;
+    }
+
+    .images::before {
+        background: none;
+        box-shadow: none;
+    }
+
+}
 
