@@ -147,23 +147,21 @@ li a:hover {
 }
 
 .content-card {
-    padding: 20px;
+  flex: 1;  
+  padding: 20px;
     height: auto;
     border: 1px solid white;
     background-color: papayawhip;
-    width: 29%;
     border-radius: 20px;
-    margin-left: 60px;
 }
 
 .content-card-features {
+  flex: 1;
     padding: 20px;
     height: auto;
     border: 1px solid white;
     background-color: papayawhip;
-    width: 29%;
     border-radius: 20px;
-    margin-left: 100px;
 }
 
 
@@ -191,13 +189,12 @@ li a:hover {
     box-shadow: 3px 3px 20px lightsteelblue;
 }
 .content-card-vision  {
-    margin: 0;
+    flex: 1;  
+  margin: 0;
     padding: 20px;
-    height: auto;
     border: 1px solid white;
     background-color: papayawhip;
     color: #1b1f27;
-    width: 100%;
     border-radius: 20px;
 }
 
@@ -545,4 +542,3 @@ li a:hover {
     }
 
 }
-
